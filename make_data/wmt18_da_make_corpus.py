@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[20]:
 
 
-DA_HOME = '/ahc/work3/kosuke-t/data/WMT/newstest2018-humaneval/analysis/'
-DARR_HOME = '/ahc/work3/kosuke-t/data/WMT/wmt18-metrics-task-package/manual-evaluation/RR-seglevel.csv'
-SRC_HOME = '/ahc/work3/kosuke-t/data/WMT/wmt18-metrics-task-package/source-system-outputs/wmt18-submitted-data/txt/sources'
-REF_HOME = '/ahc/work3/kosuke-t/data/WMT/wmt18-metrics-task-package/source-system-outputs/wmt18-submitted-data/txt/references'
-HYP_HOME = '/ahc/work3/kosuke-t/data/WMT/wmt18-metrics-task-package/source-system-outputs/wmt18-submitted-data/txt/system-outputs/newstest2018'
-SAVE_PATH_DARR = '/ahc/work3/kosuke-t/data/WMT/wmt18_darr.pkl'
-SAVE_PATH_DA = '/ahc/work3/kosuke-t/data/WMT/wmt18_da.pkl'
+import os
+
+DATA_HOME = '/ahc/work3/kosuke-t/data/'
+
+DA_HOME = os.path.join(DATA_HOME, 'WMT/newstest2018-humaneval/analysis')
+DARR_HOME = os.path.join(DATA_HOME, 'WMT/wmt18-metrics-task-package/manual-evaluation/RR-seglevel.csv')
+SRC_HOME = os.path.join(DATA_HOME, 'WMT/wmt18-metrics-task-package/source-system-outputs/wmt18-submitted-data/txt/sources')
+REF_HOME = os.path.join(DATA_HOME, 'WMT/wmt18-metrics-task-package/source-system-outputs/wmt18-submitted-data/txt/references')
+HYP_HOME = os.path.join(DATA_HOME, 'WMT/wmt18-metrics-task-package/source-system-outputs/wmt18-submitted-data/txt/system-outputs/newstest2018')
+SAVE_PATH_DARR = os.path.join(DATA_HOME, 'WMT/wmt18_darr.pkl')
+SAVE_PATH_DA_GOOD_REDUP = os.path.join(DATA_HOME, 'WMT/wmt18_da_good_redup.pkl')
+SAVE_PATH_DA_SEG = os.path.join(DATA_HOME, 'WMT/wmt18_da_seg.pkl')
 
 langs = ['cs-en', 'de-en', 'et-en', 'fi-en', 'ru-en', 'tr-en', 'zh-en', 
          'en-cs', 'en-de', 'en-et', 'en-fi', 'en-ru', 'en-tr', 'en-zh']
@@ -35,7 +40,6 @@ langs = ['cs-en', 'de-en', 'et-en', 'fi-en', 'ru-en', 'tr-en', 'zh-en',
 #            'en-zh':[]}
 
 import csv
-import os
 import pickle
 import re
 import csv
@@ -46,7 +50,7 @@ import copy
 from  tqdm import tqdm
 
 
-# In[5]:
+# In[13]:
 
 
 def load_file(filename):
@@ -75,7 +79,7 @@ for lang in langs:
 
 # ↓DARR
 
-# In[ ]:
+# In[15]:
 
 
 DArr = load_file(DARR_HOME)
@@ -100,7 +104,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 
 # DA for train
 
-# In[ ]:
+# In[16]:
 
 
 filename_good_redup = {lang: os.path.join(DA_HOME, 'ad-{}-good-stnd-redup.csv'.format(lang.replace('-', ''))) for lang in langs}
@@ -160,91 +164,40 @@ corpus_good_redup = make_corpus_good_stnd_redup(langs, DA_data_good_redup)
 corpus_seg_scores = make_corpus_seg_scores(langs, DA_data_seg_scores)
 
 
-# In[34]:
+# In[19]:
 
 
 print('good redup')
 print('-- corpus size for each language pair ---')
+lang_count = {lang:0 for lang in langs}
+for corpus in corpus_good_redup:
+    lang = corpus['lang']
+    lang_count[lang] += 1
 for lang in langs:
-    for corpus in corpus_good_redupre
-
+    print('{} has {} instances'.format(lang, lang_count[lang]))
 print()
 
 print('seg scores')
 print('-- corpus size for each language pair ---')
+lang_count = {lang:0 for lang in langs}
+for corpus in corpus_seg_scores:
+    lang = corpus['lang']
+    lang_count[lang] += 1
+for lang in langs:
+    print('{} has {} instances'.format(lang, lang_count[lang]))
 print()
 
 
-# In[ ]:
+# In[21]:
 
 
-
-
-
-# In[8]:
-
-
-len(corpus)
-
-
-# In[137]:
-
-
-DArr[:5]
-
-
-# In[131]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[10]:
-
-
-11154+43845+25625+16589+15678+16921+28819+9781+13208+15759+9708+25641+3491+29168
-
-
-# In[11]:
-
-
-147691-9492
-
-
-# In[44]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[20]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[17]:
-
-
-
+print('saving {}'.format(SAVE_PATH_DA_GOOD_REDUP))
+with open(SAVE_PATH_DA_GOOD_REDUP, mode='wb') as w:
+    pickle.dump(corpus_good_redup, w)
+    
+print('saving {}'.format(SAVE_PATH_DA_SEG))
+with open(SAVE_PATH_DA_SEG, mode='wb') as w:
+    pickle.dump(corpus_seg_scores, w)
 
 
 # In[ ]:
