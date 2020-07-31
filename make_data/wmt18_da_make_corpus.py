@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[20]:
+# In[1]:
 
 
 import os
@@ -50,7 +50,7 @@ import copy
 from  tqdm import tqdm
 
 
-# In[13]:
+# In[2]:
 
 
 def load_file(filename):
@@ -79,7 +79,7 @@ for lang in langs:
 
 # ↓DARR
 
-# In[15]:
+# In[3]:
 
 
 DArr = load_file(DARR_HOME)
@@ -92,6 +92,7 @@ for idx, da_data in enumerate(DArr):
     better_sys = da_data.split(' ')[3]
     worse_sys = da_data.split(' ')[4]
     corpus.append({'lang': lang, 
+                   'sid':sid,
                    'src': SRC_files[lang][sid-1], 
                    'ref': REF_files[lang][sid-1], 
                    'hyp1': HYP_files[lang][better_sys][sid-1], 
@@ -104,7 +105,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 
 # DA for train
 
-# In[16]:
+# In[4]:
 
 
 filename_good_redup = {lang: os.path.join(DA_HOME, 'ad-{}-good-stnd-redup.csv'.format(lang.replace('-', ''))) for lang in langs}
@@ -132,6 +133,7 @@ def make_corpus_good_stnd_redup(langs, DA_data):
                 continue
 
             corpus.append({'lang':lang,
+                           'sid':sid,
                            'src':SRC_files[lang][sid-1],
                            'ref':REF_files[lang][sid-1],
                            'hyp':HYP_files[lang][system_id][sid-1],
@@ -154,6 +156,7 @@ def make_corpus_seg_scores(langs, DA_data):
                 continue
             
             corpus.append({'lang':lang,
+                           'sid':sid,
                            'src':SRC_files[lang][sid-1],
                            'ref':REF_files[lang][sid-1],
                            'hyp':HYP_files[lang][system_id][sid-1],
@@ -164,7 +167,7 @@ corpus_good_redup = make_corpus_good_stnd_redup(langs, DA_data_good_redup)
 corpus_seg_scores = make_corpus_seg_scores(langs, DA_data_seg_scores)
 
 
-# In[19]:
+# In[5]:
 
 
 print('good redup')
@@ -188,7 +191,7 @@ for lang in langs:
 print()
 
 
-# In[21]:
+# In[6]:
 
 
 print('saving {}'.format(SAVE_PATH_DA_GOOD_REDUP))
