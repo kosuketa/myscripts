@@ -118,18 +118,6 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
     pickle.dump(corpus, w)
 
 
-# In[48]:
-
-
-missing_sys
-
-
-# In[ ]:
-
-
-
-
-
 # DA for train
 # 
 # not implemented yet
