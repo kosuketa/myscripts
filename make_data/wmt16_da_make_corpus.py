@@ -5,6 +5,7 @@
 
 
 import os
+import sys
 
 #DATA_HOME = '/ahc/work3/kosuke-t/data/'
 DATA_HOME = sys.argv[-1]
