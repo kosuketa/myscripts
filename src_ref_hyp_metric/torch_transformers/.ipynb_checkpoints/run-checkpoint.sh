@@ -5,6 +5,7 @@
 EXP_NAME="test"
 EXP_ID=0
 TRIAL_TIMES=1
+TMP_PATH='/home/is/kosuke-t/tmp/tmp_log'
 DUMP_PATH="/ahc/work3/kosuke-t/SRHDA/transformers/log/"
 MODEL_NAME="xlm-roberta-large"
 LANGS="cs-en,de-en,lv-en,fi-en,ro-en,ru-en,tr-en,zh-en"
@@ -44,6 +45,7 @@ HYP_TEST="/ahc/work3/kosuke-t/data/SRHDA/WMT15_17_DA/test.hyp"
 LABEL_TRAIN="/ahc/work3/kosuke-t/data/SRHDA/WMT15_17_DA/train.label"
 LABEL_VALID="/ahc/work3/kosuke-t/data/SRHDA/WMT15_17_DA/valid.label"
 LABEL_TEST="/ahc/work3/kosuke-t/data/SRHDA/WMT15_17_DA/test.label"
+DARR='False'
 
 TRAIN_SHRINK="1.0"
 
@@ -248,6 +250,10 @@ do
             LABEL_TEST="$2"
             shift 2
             ;;
+        --darr)
+            DARR="$2"
+            shift 2
+            ;;
         --train_shrink)
             TRAIN_SHRINK="$2"
             shift 2
@@ -277,9 +283,9 @@ fi
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
         EXP_ID=`expr "$EXP_ID" + 1`
-        for i in `seq "${TRIAL_TIMES}"` ; do
-            N_TRIAL="$i"
-            python trainer_debug.py \
+#         for i in `seq "${TRIAL_TIMES}"` ; do
+            N_TRIAL="1"
+            python trainer.py \
             --exp_name "$EXP_NAME" \
             --exp_id "$EXP_ID" \
             --trial_times "$TRIAL_TIMES" \
@@ -316,9 +322,10 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
             --label_train "$LABEL_TRAIN" \
             --label_valid "$LABEL_VALID" \
             --label_test "$LABEL_TEST" \
+            --darr "$DARR" \
             --train_shrink "$TRAIN_SHRINK" \
             --debug "$DEBUG"
-        done
+#         done
     done
 done
 #python results_summary.py --exp_name "$EXP_NAME" --langs "$RG_STEPS" --n_operation "$OP_TIMES" --valid_lang_separate True

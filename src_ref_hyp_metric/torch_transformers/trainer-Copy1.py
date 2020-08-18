@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[ ]:
 
 
 import os
@@ -29,6 +29,7 @@ from torch.nn.utils.rnn import pad_sequence
 from torch import nn
 import utils
 from shutil import rmtree
+import shutil
 import apex
 from torch import nn
 import torch.nn.functional as F
@@ -89,6 +90,7 @@ parser.add_argument('--exp_name', type=str, default='test')
 parser.add_argument('--exp_id', type=str, default='1')
 parser.add_argument('--trial_times', type=int, default=10)
 parser.add_argument('--n_trial', type=int, default=1)
+parser.add_argument('--tmp_path', type=str, default='/home/is/kosuke-t/log')
 parser.add_argument('--dump_path', type=str, default='/ahc/work3/kosuke-t/SRHDA/XLM/log/')
 parser.add_argument('--model_name', type=str, default='bert-base-uncased')
 parser.add_argument('--langs', type=str, default='cs-en,de-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en')
@@ -143,6 +145,16 @@ elif args.empty_dump:
     os.makedirs(args.dump_path)
 if args.save_model_path == '':
     args.save_model_path = os.path.join(args.dump_path, args.save_model_name)
+    
+# make tmp_path
+args.tmp_path = os.path.join(os.path.join(args.tmp_path, args.exp_name), args.exp_id)
+if not os.path.isdir(args.tmp_path):
+    os.makedirs(args.tmp_path)
+elif args.empty_dump:
+    rmtree(args.tmp_path)
+    os.makedirs(args.tmp_path)
+if args.save_model_path == '':
+    args.save_model_path = os.path.join(args.tmp_path, args.save_model_name)
     
 args.langs = args.langs.split(',')
 
@@ -204,7 +216,7 @@ if utils.get_model_type in ['bert']:
 else:
     args.use_token_type_ids = False
     
-logging.basicConfig(filename=os.path.join(args.dump_path, 'logger.log'), level=logging.INFO)
+logging.basicConfig(filename=os.path.join(args.tmp_path, 'logger.log'), level=logging.INFO)
 args.logger = logging
 
 args.batch_size = int(args.batch_size.split('=')[-1])
@@ -212,14 +224,8 @@ args.batch_size = int(args.batch_size.split('=')[-1])
 txt = ""
 for key, value in args.__dict__.items():
     txt += '{}:{}{}'.format(str(key), str(value), os.linesep)
-with open(os.path.join(args.dump_path, 'arguments.txt'), mode='w', encoding='utf-8') as w:
+with open(os.path.join(args.tmp_path, 'arguments.txt'), mode='w', encoding='utf-8') as w:
     w.write(txt)
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
@@ -394,7 +400,7 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results, best_val_loss
 #                 checkpoint = {'model': model.state_dict(),
 #                               'optimizer': optimizer.state_dict(),
 #                               'amp': apex.amp.state_dict()}
-#                 torch.save(checkpoint, os.path.join(args.dump_path,'{}th_best_valid_checkpoint.pth'.format(args.n_trial-1)))
+#                 torch.save(checkpoint, os.path.join(args.tmp_path,'{}th_best_valid_checkpoint.pth'.format(args.n_trial-1)))
 #                 print('finished saving!')
 
     return model, valid_dataloader, mse, optimizer, args, results, best_val_loss, best_val_pearson
@@ -509,7 +515,7 @@ def _run_epoch(best_valid_pearsons, best_valid_epochs, lang_availables,
 
         print('-----------------')
     
-    with open(os.path.join(args.dump_path, 'result.pkl'), mode='wb') as w:
+    with open(os.path.join(args.tmp_path, 'result.pkl'), mode='wb') as w:
         pickle.dump(results, w)
     
     if args.train and args.test:
@@ -529,7 +535,7 @@ def _run_epoch(best_valid_pearsons, best_valid_epochs, lang_availables,
         txt += 'all : {:.3f}'.format(results[args.n_trial-1]['test']['pearson'][best_valid_epoch]) + str(os.linesep)
         txt += 'ave : {:.3f}'.format(np.mean([results[args.n_trial-1]['test']['{}_pearson'.format(lang)][best_valid_epoch] for lang in lang_availables])) + str(os.linesep)
         print(txt)
-        performance_summary_filepath = os.path.join(args.dump_path, '{}th_final_pearformance.txt'.format(args.n_trial))
+        performance_summary_filepath = os.path.join(args.tmp_path, '{}th_final_pearformance.txt'.format(args.n_trial))
         with open(performance_summary_filepath, mode='w', encoding='utf-8') as w:
             w.write(txt)
             
@@ -540,106 +546,119 @@ def _run_epoch(best_valid_pearsons, best_valid_epochs, lang_availables,
 # In[17]:
 
 
-TokenizerClass = utils.get_tokenizer_class(args.model_name)
-ModelClass = utils.get_model_class(args.model_name)
-ConfigClass = utils.get_config_class(args.model_name)
-tokenizer = TokenizerClass.from_pretrained(args.model_name)
-config = ConfigClass.from_pretrained(args.model_name)
-data_trans = Data_Transformer(args, tokenizer)
-args.model_config = config
-DATA = {}
-if args.train:
-    DATA['train'] = Dataset(data_trans, tokenizer, args.data_paths_train, args, '{}.train'.format(args.exp_name))
-    DATA['valid'] = Dataset(data_trans, tokenizer, args.data_paths_valid, args, '{}.valid'.format(args.exp_name))
-if args.test:
-    DATA['test'] = Dataset(data_trans, tokenizer, args.data_paths_test, args, '{}.test'.format(args.exp_name))
-train_dataloader = torch.utils.data.DataLoader(DATA['train'], 
-                                               batch_size=args.batch_size, 
-                                               collate_fn=data_trans.collate_fn, shuffle=True)
-valid_dataloader = torch.utils.data.DataLoader(DATA['valid'], batch_size=args.batch_size,
-                                               collate_fn=data_trans.collate_fn, shuffle=True)
-test_dataloader = torch.utils.data.DataLoader(DATA['test'], batch_size=args.batch_size,
-                                              collate_fn=data_trans.collate_fn, shuffle=False)
+def main():
+    TokenizerClass = utils.get_tokenizer_class(args.model_name)
+    ModelClass = utils.get_model_class(args.model_name)
+    ConfigClass = utils.get_config_class(args.model_name)
+    tokenizer = TokenizerClass.from_pretrained(args.model_name)
+    config = ConfigClass.from_pretrained(args.model_name)
+    data_trans = Data_Transformer(args, tokenizer)
+    args.model_config = config
+    DATA = {}
+    if args.train:
+        DATA['train'] = Dataset(data_trans, tokenizer, args.data_paths_train, args, '{}.train'.format(args.exp_name))
+        DATA['valid'] = Dataset(data_trans, tokenizer, args.data_paths_valid, args, '{}.valid'.format(args.exp_name))
+    if args.test:
+        DATA['test'] = Dataset(data_trans, tokenizer, args.data_paths_test, args, '{}.test'.format(args.exp_name))
+    train_dataloader = torch.utils.data.DataLoader(DATA['train'], 
+                                                   batch_size=args.batch_size, 
+                                                   collate_fn=data_trans.collate_fn, shuffle=True)
+    valid_dataloader = torch.utils.data.DataLoader(DATA['valid'], batch_size=args.batch_size,
+                                                   collate_fn=data_trans.collate_fn, shuffle=True)
+    test_dataloader = torch.utils.data.DataLoader(DATA['test'], batch_size=args.batch_size,
+                                                  collate_fn=data_trans.collate_fn, shuffle=False)
 
-model = ModelClass.from_pretrained(args.model_name, config=config)
-model.config.num_labels = 1
+    model = ModelClass.from_pretrained(args.model_name, config=config)
+    model.config.num_labels = 1
 
-if args.hyp_src_hyp_ref:
-    model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
-else:
-    model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
+    if args.hyp_src_hyp_ref:
+        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
+    else:
+        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
 
-optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
-mse = nn.MSELoss()
-model.to('cuda')
+    optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
+    mse = nn.MSELoss()
+    model.to('cuda')
 
-if args.amp:
-    model, optimizer = apex.amp.initialize(
-        model,
-        optimizer,
-        opt_level=('O%i' % 1)
-    )
+    if args.amp:
+        model, optimizer = apex.amp.initialize(
+            model,
+            optimizer,
+            opt_level=('O%i' % 1)
+        )
 
-result_path = os.path.join(args.dump_path, 'result.pkl')
-if not os.path.isfile(result_path):
-    results = [{mode:{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} for mode in ['train', 'valid', 'test']} for _ in range(args.trial_times)]
-else:
-    with open(result_path, mode='rb') as r:
-        results = pickle.load(r) 
-if len(results[args.n_trial-1]['valid']['pearson']) > args.epoch_size:
-    for _ in range(len(results[args.n_trial-1]['valid']['pearson']) - args.epoch_size):
-        for key in results[args.n_trial-1]['valid'].keys():
-            if type(results[args.n_trial-1]['valid'][key]) == list and len(results[args.n_trial-1]['valid'][key]) != 0:
-                results[args.n_trial-1]['valid'][key].pop(-1)
-            if type(results[args.n_trial-1]['train'][key]) == list and len(results[args.n_trial-1]['train'][key]) != 0:
-                results[args.n_trial-1]['train'][key].pop(-1)
-if len(results[args.n_trial-1]['test']['pearson']) > args.epoch_size:
-    for _ in range(len(results[args.n_trial-1]['test']['pearson']) - args.epoch_size):
-        for key in results[args.n_trial-1]['test'].keys():
-            if type(results[args.n_trial-1]['test'][key]) == list and len(results[args.n_trial-1]['test'][key]) != 0:
-                results[args.n_trial-1]['test'][key].pop(-1)
+    result_path = os.path.join(args.tmp_path, 'result.pkl')
+    if not os.path.isfile(result_path):
+        results = [{mode:{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} for mode in ['train', 'valid', 'test']} for _ in range(args.trial_times)]
+    else:
+        with open(result_path, mode='rb') as r:
+            results = pickle.load(r) 
+    if len(results[args.n_trial-1]['valid']['pearson']) > args.epoch_size:
+        for _ in range(len(results[args.n_trial-1]['valid']['pearson']) - args.epoch_size):
+            for key in results[args.n_trial-1]['valid'].keys():
+                if type(results[args.n_trial-1]['valid'][key]) == list and len(results[args.n_trial-1]['valid'][key]) != 0:
+                    results[args.n_trial-1]['valid'][key].pop(-1)
+                if type(results[args.n_trial-1]['train'][key]) == list and len(results[args.n_trial-1]['train'][key]) != 0:
+                    results[args.n_trial-1]['train'][key].pop(-1)
+    if len(results[args.n_trial-1]['test']['pearson']) > args.epoch_size:
+        for _ in range(len(results[args.n_trial-1]['test']['pearson']) - args.epoch_size):
+            for key in results[args.n_trial-1]['test'].keys():
+                if type(results[args.n_trial-1]['test'][key]) == list and len(results[args.n_trial-1]['test'][key]) != 0:
+                    results[args.n_trial-1]['test'][key].pop(-1)
 
-best_valid_pearsons_path = os.path.join(args.dump_path, 'best_valid_pearsons.pkl')
-if not os.path.isfile(best_valid_pearsons_path):
-    best_valid_pearsons = [-1.0]*args.trial_times
-else:
-    with open(best_valid_pearsons_path, mode='rb') as r:
-        best_valid_pearsons = pickle.load(r) 
+    best_valid_pearsons_path = os.path.join(args.tmp_path, 'best_valid_pearsons.pkl')
+    if not os.path.isfile(best_valid_pearsons_path):
+        best_valid_pearsons = [-1.0]*args.trial_times
+    else:
+        with open(best_valid_pearsons_path, mode='rb') as r:
+            best_valid_pearsons = pickle.load(r) 
 
-best_valid_epochs_path = os.path.join(args.dump_path, 'best_valid_epochs.pkl')
-if not os.path.isfile(best_valid_epochs_path):
-    best_valid_epochs = [0]*args.trial_times
-else:
-    with open(best_valid_epochs_path, mode='rb') as r:
-        best_valid_epochs = pickle.load(r) 
+    best_valid_epochs_path = os.path.join(args.tmp_path, 'best_valid_epochs.pkl')
+    if not os.path.isfile(best_valid_epochs_path):
+        best_valid_epochs = [0]*args.trial_times
+    else:
+        with open(best_valid_epochs_path, mode='rb') as r:
+            best_valid_epochs = pickle.load(r) 
 
-lang_availables = [] # only for test
-if args.train or args.test:
-    if len(results[args.n_trial-1]['valid']['pearson']) != args.epoch_size or len(results[args.n_trial-1]['test']['pearson']) != args.epoch_size:
-        _run_epoch(best_valid_pearsons, best_valid_epochs, lang_availables, 
-                   train_dataloader, valid_dataloader, test_dataloader,
-                   args, results, 
-                   ModelClass, ConfigClass, 
-                   model, optimizer, config, mse)
-    
-if args.train and args.test and args.n_trial == args.trial_times:
-    best_val_r = -1.0
-    best_trial = 0
-    for n_t, r in enumerate(best_valid_pearsons):
-        if best_val_r < r:
-            best_val_r = r
-            best_trial = n_t
-    txt = ""
-    txt += '--- Best Model : {}th Model---'.format(best_trial+1) + str(os.linesep)
-    e = best_valid_epochs[best_trial]
-    for lang in lang_availables:
-        txt += '{} : {:.3f}'.format(lang, results[best_trial]['test']['{}_pearson'.format(lang)][e]) + str(os.linesep)
-    txt += 'all : {:.3f}'.format(results[best_trial]['test']['pearson'][e]) + str(os.linesep)
-    txt += 'ave : {:.3f}'.format(np.mean([results[best_trial]['test']['{}_pearson'.format(lang)][e] for lang in lang_availables])) + str(os.linesep)
-    print(txt)
-    summary_filepath = os.path.join(args.dump_path, 'final_result.txt')
-    with open(summary_filepath, mode='w', encoding='utf-8') as w:
-        w.write(txt)
+    lang_availables = [] # only for test
+    if args.train or args.test:
+        if len(results[args.n_trial-1]['valid']['pearson']) != args.epoch_size or len(results[args.n_trial-1]['test']['pearson']) != args.epoch_size:
+            _run_epoch(best_valid_pearsons, best_valid_epochs, lang_availables, 
+                       train_dataloader, valid_dataloader, test_dataloader,
+                       args, results, 
+                       ModelClass, ConfigClass, 
+                       model, optimizer, config, mse)
+
+    if args.train and args.n_trial == args.trial_times:
+        best_val_r = -1.0
+        best_trial = 0
+        for n_t, r in enumerate(best_valid_pearsons):
+            if best_val_r < r:
+                best_val_r = r
+                best_trial = n_t
+        txt = ""
+        txt += '--- Best Model : {}th Model---'.format(best_trial+1) + str(os.linesep)
+        e = best_valid_epochs[best_trial]
+        for lang in lang_availables:
+            txt += '{} : {:.3f}'.format(lang, results[best_trial]['test']['{}_pearson'.format(lang)][e]) + str(os.linesep)
+        txt += 'all : {:.3f}'.format(results[best_trial]['test']['pearson'][e]) + str(os.linesep)
+        txt += 'ave : {:.3f}'.format(np.mean([results[best_trial]['test']['{}_pearson'.format(lang)][e] for lang in lang_availables])) + str(os.linesep)
+        print(txt)
+        summary_filepath = os.path.join(args.tmp_path, 'final_result.txt')
+        with open(summary_filepath, mode='w', encoding='utf-8') as w:
+            w.write(txt)
+
+    print('moving tmp files to dump dir')
+    for f in os.scandir(args.tmp_path):
+        tmp_file = os.path.join(args.tmp_path, f.name)
+        shutil.move(tmp_file, args.dump_path)
+
+
+# In[ ]:
+
+
+if __name__ == '__main__':
+    main()
 
 
 # In[ ]:

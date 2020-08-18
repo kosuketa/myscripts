@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[3]:
 
 
 import os
+import sys
 
-DATA_HOME = '/ahc/work3/kosuke-t/data/'
+#DATA_HOME = '/ahc/work3/kosuke-t/data/'
+DATA_HOME = sys.argv[-1]
 
 SAVE_PATH_DA = os.path.join(DATA_HOME, 'WMT/wmt15_da.pkl')
 _DATA_HOME = os.path.join(DATA_HOME, 'WMT/DAseg-wmt-newstest2015')
@@ -25,7 +27,7 @@ import copy
 from  tqdm import tqdm
 
 
-# In[9]:
+# In[4]:
 
 
 def load_file(filename):
@@ -42,13 +44,14 @@ HYP_files = {lang:load_file(os.path.join(_DATA_HOME, 'DAseg.newstest2015.mt-syst
 DA_files = {lang:load_file(os.path.join(_DATA_HOME, 'DAseg.newstest2015.human.{}'.format(lang))) for lang in langs}
 
 
-# In[10]:
+# In[5]:
 
 
 corpus = []
 for lang in langs:
     for i, (src, ref, hyp, label) in enumerate(zip(SRC_files[lang], REF_files[lang], HYP_files[lang], DA_files[lang])):
         corpus.append({'lang':lang,
+                       'year':15,
                        'sid':int(i)+1,
                        'src':src.rstrip(),
                        'ref':ref.rstrip(),
@@ -58,12 +61,18 @@ for lang in langs:
         
 
 
-# In[11]:
+# In[6]:
 
 
 print('saving {}'.format(SAVE_PATH_DA))
 with open(SAVE_PATH_DA, mode='wb') as w:
     pickle.dump(corpus, w)
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

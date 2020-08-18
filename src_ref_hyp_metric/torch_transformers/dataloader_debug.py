@@ -62,7 +62,7 @@ class Dataset(torch.utils.data.Dataset):
         self.args = params
         self.data = []
         self.label = []
-        self.savedata_dir = os.path.join(params.dump_path, '{}.pkl'.format(data_name))
+        self.savedata_dir = os.path.join(params.tmp_path, '{}.pkl'.format(data_name))
         if not os.path.isfile(self.savedata_dir):
             self.data = self.read_data(self.data_paths, tokenizer)
             with open(self.savedata_dir, mode='wb') as w:
