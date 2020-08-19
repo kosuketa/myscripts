@@ -158,6 +158,10 @@ do
             DUMP_PARH="$2"
             shift 2
             ;;
+        --tmp_path)
+            TMP_PATH="$2"
+            shift 2
+            ;;
         --langs)
             LANGS="$2"
             shift 2
@@ -314,6 +318,7 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
             --trial_times "$TRIAL_TIMES" \
             --n_trial "$N_TRIAL" \
             --dump_path "$DUMP_PATH" \
+            --tmp_path "$TMP_PATH"
             --model_name "$MODEL_NAME" \
             --langs "$LANGS" \
             --empty_dump "$EMPTY_DUMP" \
