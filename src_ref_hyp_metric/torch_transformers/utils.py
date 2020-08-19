@@ -40,7 +40,6 @@ import pickle
 import subprocess
 
 import random
-import apex
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 

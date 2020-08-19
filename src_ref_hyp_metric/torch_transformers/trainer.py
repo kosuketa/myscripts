@@ -22,7 +22,6 @@ import random
 import math
 from tqdm import tqdm
 import torch
-from apex import amp
 from torch import optim
 from typing import Tuple
 from torch.nn.utils.rnn import pad_sequence
@@ -579,10 +578,10 @@ def _run_test(test_dataloader, ModelClass, config, results, args, lang_available
     model.to('cuda')
     optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
     mse = nn.MSELoss()
-    model, optimizer = amp.initialize(model, optimizer, opt_level='O%i' % 1)
+    model, optimizer = apex.amp.initialize(model, optimizer, opt_level='O%i' % 1)
     model.load_state_dict(checkpoint['model'])
     optimizer.load_state_dict(checkpoint['optimizer'])
-    amp.load_state_dict(checkpoint['amp'])
+    apex.amp.load_state_dict(checkpoint['amp'])
 
     args.logger.info('finished loading the model!')
     
