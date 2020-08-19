@@ -7,8 +7,8 @@
 import os
 import sys
 
-DATA_HOME = '/ahc/work3/kosuke-t/data/'
-#DATA_HOME = sys.argv[-1]
+#DATA_HOME = '/ahc/work3/kosuke-t/data/'
+DATA_HOME = sys.argv[-1]
 
 DA_HOME = os.path.join(DATA_HOME, 'WMT/DAseg-wmt-newstest2017/ensembled')
 HUME_HOME = os.path.join(DATA_HOME, 'WMT/wmt17-metrics-task-package/manual-evaluation/hume-testset-round-2.tsv')
