@@ -155,7 +155,7 @@ do
             done
             ;;
         --dump_path)
-            DUMP_PARH="$2"
+            DUMP_PATH="$2"
             shift 2
             ;;
         --tmp_path)

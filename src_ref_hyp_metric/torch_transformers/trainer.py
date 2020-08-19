@@ -241,7 +241,8 @@ if utils.get_model_type in ['bert']:
 else:
     args.use_token_type_ids = False
 
-args.batch_size = int(args.batch_size.split('=')[-1])
+args.batch_sizes = [int(x.split('=')[-1]) for x in args.batch_size.split('/')]
+args.optimizers = args.optimizer.split('/')
 
 txt = ""
 for key, value in args.__dict__.items():
@@ -373,13 +374,13 @@ def _train(model, train_dataloader, mse, optimizer, args, results):
         raw_refs.extend(batch_data['raw_ref'])
         raw_hyps.extend(batch_data['raw_hyp'])
 
-    results['train'][args.n_trial-1]['loss'].append(np.mean(losses))
-    results['train'][args.n_trial-1]['pearson'].append(utils.calc_pearson(preds_ls, trues_ls))
-    results['train'][args.n_trial-1]['pred'].append(preds_ls)
-    results['train'][args.n_trial-1]['true'].append(trues_ls)
-    results['train'][args.n_trial-1]['raw_src'].append(raw_srcs)
-    results['train'][args.n_trial-1]['raw_ref'].append(raw_refs)
-    results['train'][args.n_trial-1]['raw_hyp'].append(raw_hyps)
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'].append(np.mean(losses))
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'].append(utils.calc_pearson(preds_ls, trues_ls))
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pred'].append(preds_ls)
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['true'].append(trues_ls)
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_src'].append(raw_srcs)
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_ref'].append(raw_refs)
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_hyp'].append(raw_hyps)
     
     return model, train_dataloader, mse, optimizer, args, results
 
@@ -387,7 +388,8 @@ def _train(model, train_dataloader, mse, optimizer, args, results):
 # In[ ]:
 
 
-def _valid(model, valid_dataloader, mse, optimizer, args, results, best_val_loss, best_val_pearson):
+def _valid(model, valid_dataloader, mse, optimizer, args, results, 
+           best_valid_loss, best_valid_pearson, n_epoch):
     model.eval()
     losses = []
     preds_ls = []
@@ -405,23 +407,26 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results, best_val_loss
         raw_refs.extend(batch_data['raw_ref'])
         raw_hyps.extend(batch_data['raw_hyp'])
 
-    results['valid'][args.n_trial-1]['loss'].append(np.mean(losses))
-    results['valid'][args.n_trial-1]['pearson'].append(utils.calc_pearson(preds_ls, trues_ls))
-    results['valid'][args.n_trial-1]['pred'].append(preds_ls)
-    results['valid'][args.n_trial-1]['true'].append(trues_ls)
-    results['valid'][args.n_trial-1]['raw_src'].append(raw_srcs)
-    results['valid'][args.n_trial-1]['raw_ref'].append(raw_refs)
-    results['valid'][args.n_trial-1]['raw_hyp'].append(raw_hyps)
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'].append(np.mean(losses))
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'].append(utils.calc_pearson(preds_ls, trues_ls))
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pred'].append(preds_ls)
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['true'].append(trues_ls)
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_src'].append(raw_srcs)
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_ref'].append(raw_refs)
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_hyp'].append(raw_hyps)
 
     # update lr
-    if best_val_loss > np.mean(losses):
-        best_val_loss = np.mean(losses)
+    if best_valid_loss > np.mean(losses):
+        best_valid_loss = np.mean(losses)
     else:
         optimizer = update_lr(optimizer, args)
 
     #save model
-    if best_val_pearson < results['valid'][args.n_trial-1]['pearson'][-1]:
-        best_val_pearson = results['valid'][args.n_trial-1]['pearson'][-1]
+    if best_valid_pearson['pearson'] < results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]:
+        best_valid_pearson['pearson'] = results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]
+        best_valid_pearson['optimizer'] = args.optimizer
+        best_valid_pearson['batch_size'] = args.batch_size
+        best_valid_pearson['epoch'] = n_epoch
         args.logger.info('saving a model!')
         checkpoint = {'model': model.state_dict(),
                       'optimizer': optimizer.state_dict(),
@@ -429,7 +434,7 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results, best_val_loss
         torch.save(checkpoint, os.path.join(args.tmp_path,'best_valid_checkpoint.pth'))
         args.logger.info('finished saving!')
 
-    return model, valid_dataloader, mse, optimizer, args, results, best_val_loss, best_val_pearson
+    return model, valid_dataloader, mse, optimizer, args, results, best_valid_loss, best_valid_pearson
 
 
 # In[ ]:
@@ -488,7 +493,7 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
 
 
 # @profile
-def _run_train(best_valid_pearsons, best_valid_epochs, 
+def _run_train(best_valid_pearson, 
                train_dataloader, valid_dataloader,
                args, results, 
                ModelClass, ConfigClass, 
@@ -513,10 +518,9 @@ def _run_train(best_valid_pearsons, best_valid_epochs,
             opt_level=('O%i' % 1)
         )
     
-    best_val_pearson = max(best_valid_pearsons)
-    best_val_loss = 1000
+    best_valid_loss = 1000
     
-    for n_epoch in range(args.epoch_size):
+    for n_epoch in range(1, args.epoch_size+1):
         start_time = time.time()
         # train
         model, train_dataloader, mse, optimizer, args, results = _train(model, 
@@ -527,45 +531,28 @@ def _run_train(best_valid_pearsons, best_valid_epochs,
                                                                         results)
 
         # valid
-        model, valid_dataloader, mse, optimizer, args, results, best_val_loss, best_val_pearson = _valid(model, 
+        model, valid_dataloader, mse, optimizer, args, results, best_valid_loss, best_valid_pearson = _valid(model, 
                                                                                                          valid_dataloader, 
                                                                                                          mse, optimizer, 
                                                                                                          args, 
                                                                                                          results, 
-                                                                                                         best_val_loss,
-                                                                                                         best_val_pearson)
+                                                                                                         best_valid_loss,
+                                                                                                         best_valid_pearson,
+                                                                                                             n_epoch)
 
         
         end_time = time.time()
         args.logger.info('exp_id:{}, n_trial:{}, {}epoch finished!　　Took {}m{}s'.format(args.exp_id, args.n_trial, n_epoch+1, int((end_time-start_time)/60), int((end_time-start_time)%60)))
         args.logger.info('lr = {}'.format(optimizer.param_groups[0]['lr']))
         if args.train:
-            args.logger.info('train loss_mean:{:.4f}, pearson:{:.4f}'.format(results[args.n_trial-1]['train']['loss'][-1], results[args.n_trial-1]['train']['pearson'][-1]))
-            args.logger.info('valid loss_mean:{:.4f}, pearson:{:.4f}'.format(results[args.n_trial-1]['valid']['loss'][-1], results[args.n_trial-1]['valid']['pearson'][-1]))
+            args.logger.info('train loss_mean:{:.4f}, pearson:{:.4f}'.format(results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1],
+                                                                             results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]))
+            args.logger.info('valid loss_mean:{:.4f}, pearson:{:.4f}'.format(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1], 
+                                                                             results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]))
     
     with open(os.path.join(args.tmp_path, 'result.pkl'), mode='wb') as w:
         pickle.dump(results, w)
     
-    best_valid_pearson = -1.0
-    best_valid_epoch = 0
-    for e, v_pearson in enumerate(results[args.n_trial-1]['valid']['pearson']):
-        if best_valid_pearson < v_pearson:
-            best_valid_pearson = v_pearson
-            best_valid_epoch = e
-    best_valid_pearsons[args.n_trial-1] = best_valid_pearson
-    best_valid_epochs[args.n_trial-1] = best_valid_epoch
-
-#     args.logger.info('--- Final Performance of {}th Model (Pearson)---'.format(args.n_trial))
-#     txt = ""
-#     for lang in lang_availables:
-#         txt += '{} : {:.3f}'.format(lang, results[args.n_trial-1]['test']['{}_pearson'.format(lang)][best_valid_epoch]) + str(os.linesep)
-#     txt += 'all : {:.3f}'.format(results[args.n_trial-1]['test']['pearson'][best_valid_epoch]) + str(os.linesep)
-#     txt += 'ave : {:.3f}'.format(np.mean([results[args.n_trial-1]['test']['{}_pearson'.format(lang)][best_valid_epoch] for lang in lang_availables])) + str(os.linesep)
-#     args.logger.info(txt)
-#     performance_summary_filepath = os.path.join(args.tmp_path, '{}th_final_pearformance.txt'.format(args.n_trial))
-#     with open(performance_summary_filepath, mode='w', encoding='utf-8') as w:
-#         w.write(txt)
-            
     return (best_valid_pearsons, best_valid_epochs, results)
 
 
@@ -609,9 +596,7 @@ def _run_test(test_dataloader, ModelClass, config, results, args, lang_available
                                                                                     lang_availables)  
         
     lang_availables = [l for l in args.langs if l in lang_availables]
-#     args.logger.info('test loss_mean:{:.4f}\ntest all pearson:{:.4f}'.format(results[args.n_trial-1]['test']['loss'][-1], results[args.n_trial-1]['test']['pearson'][-1]))
-#     for lang in lang_availables:
-#         args.logger.info('test {} pearson:{:.4f}'.format(lang, results['test'][args.n_trial-1]['{}_pearson'.format(lang)][-1]))
+
     
     return results, lang_availables
 
@@ -641,66 +626,51 @@ def main():
     
         test_dataloader = torch.utils.data.DataLoader(DATA['test'], batch_size=args.batch_size,
                                                   collate_fn=data_trans.collate_fn, shuffle=False)
-
+    
     result_path = os.path.join(args.tmp_path, 'result.pkl')
     if not os.path.isfile(result_path):
-        results = {mode:[{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} for _ in range(args.trial_times)] for mode in ['train', 'valid']}
+        results = {mode:
+                       {opt:
+                            {'batch={}'.format(bt):
+                                 [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
+                                  for _ in range(args.trial_times)]
+                             for bt in args.batch_sizes }
+                        for opt in args.optimizers}
+                   for mode in ['train', 'valid']}
         results['test'] = {key:[] for key in ['loss', 'pearson', 'pred', 'true', 'vector' 'raw_src', 'raw_ref', 'raw_hyp']}
     else:
         with open(result_path, mode='rb') as r:
             results = pickle.load(r) 
-    if len(results['valid'][args.n_trial-1]['pearson']) > args.epoch_size:
-        for _ in range(len(results['valid'][args.n_trial-1]['pearson']) - args.epoch_size):
-            for key in results['valid'][args.n_trial-1].keys():
-                if type(results['valid'][args.n_trial-1][key]) == list and len(results[args.n_trial-1]['valid'][key]) != 0:
-                    results['valid'][args.n_trial-1][key].pop(-1)
-                if type(results['train'][args.n_trial-1][key]) == list and len(results[args.n_trial-1]['train'][key]) != 0:
-                    results['train'][args.n_trial-1][key].pop(-1)
 
-    best_valid_pearsons_path = os.path.join(args.tmp_path, 'best_valid_pearsons.pkl')
+    best_valid_pearson_path = os.path.join(args.tmp_path, 'best_valid_pearson.pkl')
     if not os.path.isfile(best_valid_pearsons_path):
-        best_valid_pearsons = [-1.0]*args.trial_times
+        best_valid_pearson = {'optimizer':'', 'batch_size':0, 'n_trial':0, 'epoch':0, 'pearson':-1.0}
     else:
         with open(best_valid_pearsons_path, mode='rb') as r:
-            best_valid_pearsons = pickle.load(r) 
-
-    best_valid_epochs_path = os.path.join(args.tmp_path, 'best_valid_epochs.pkl')
-    if not os.path.isfile(best_valid_epochs_path):
-        best_valid_epochs = [0]*args.trial_times
-    else:
-        with open(best_valid_epochs_path, mode='rb') as r:
-            best_valid_epochs = pickle.load(r) 
+            best_valid_pearson = pickle.load(r)
     
     lang_availables = [] # only for test
+    
     if args.train:
-        for n_trial in range(1, args.trial_times+1):
-            args.n_trial = n_trial
-            if len(results['valid'][args.n_trial-1]['pearson']) != args.epoch_size:
-                returned =  _run_train(best_valid_pearsons, best_valid_epochs, 
-                                       train_dataloader, valid_dataloader,
-                                       args, results, ModelClass, ConfigClass, config)
-                best_valid_pearsons = returned[0]
-                best_valid_epochs = returned[1]
-                results = returned[2] 
-            with open(result_path, mode='wb') as w:
-                pickle.dump(results, w) 
-            best_val_r = -1.0
-            best_trial = 0
-            for n_t, r in enumerate(best_valid_pearsons):
-                if best_val_r < r:
-                    best_val_r = r
-                    best_trial = n_t
-#             txt = ""
-#             txt += '--- Best Model : {}th Model---'.format(best_trial+1) + str(os.linesep)
-#             e = best_valid_epochs[best_trial]
-#             for lang in lang_availables:
-#                 txt += '{} : {:.3f}'.format(lang, results[best_trial]['test']['{}_pearson'.format(lang)][e]) + str(os.linesep)
-#             txt += 'all : {:.3f}'.format(results[best_trial]['test']['pearson'][e]) + str(os.linesep)
-#             txt += 'ave : {:.3f}'.format(np.mean([results[best_trial]['test']['{}_pearson'.format(lang)][e] for lang in lang_availables])) + str(os.linesep)
-#             args.logger.info(txt)
-#             summary_filepath = os.path.join(args.tmp_path, 'final_result.txt')
-#             with open(summary_filepath, mode='w', encoding='utf-8') as w:
-#                 w.write(txt)
+        for opt in args.optimizers:
+            args.optimizer = opt
+            for bt in args.batch_sizes:
+                args.batch_size = bt
+                for n_trial in range(1, args.trial_times+1):
+                    args.n_trial = n_trial
+                    if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
+                        best_valid_pearson, results =  _run_train(best_valid_pearson, 
+                                                                  train_dataloader, 
+                                                                  valid_dataloader,
+                                                                  args, results, ModelClass, ConfigClass, config)
+                    with open(best_valid_pearsons_path, mode='wb') as w:
+                        pickle.dump(best_valid_pearson, w)
+                         
+        args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
+        args.logger.info('Best Hyper-paramer : {}, batch={}, n_trial={}, epoch={}'.format(best_valid_pearson['optimizer'],
+                                                                                          best_valid_pearson['batch_size'],
+                                                                                          best_valid_pearson['n_trial'],
+                                                                                          best_valid_pearson['epoch']))
     
     
     if args.test:
