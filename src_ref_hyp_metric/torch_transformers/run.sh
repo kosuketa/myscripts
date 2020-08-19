@@ -8,8 +8,25 @@ TRIAL_TIMES=1
 TMP_PATH='/home/is/kosuke-t/tmp/tmp_log'
 DUMP_PATH="/ahc/work3/kosuke-t/SRHDA/transformers/log/"
 MODEL_NAME="xlm-roberta-large"
+
+# lang for WMT19 all-all
+#LANGS="de-cs,de-en,de-fr,en-cs,en-de,en-fi,en-gu,en-kk,en-lt,en-ru,en-zh,fi-en,fr-de,gu-en,kk-en,lt-en,ru-en,zh-en"
+# lang for WMT19 all-en
+#LANGS="de-en,fi-en,gu-en,kk-en,lt-en,ru-en,zh-en"
+# lang for WMT19 en-all
+#LANGS="en-cs,en-de,en-fi,en-gu,en-kk,en-lt,en-ru,en-zh"
+
+# lang for WMT18 for all-all
+LANGS="cs-en,de-en,en-cs,en-de,en-et,en-fi,en-ru,en-tr,en-zh,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+
+# lang for WMT17
 LANGS="cs-en,de-en,lv-en,fi-en,ro-en,ru-en,tr-en,zh-en"
+
+# lang for XLM15
 # LANGS="de-en,ru-en,tr-en,zh-en"
+
+
+
 EMPTY_DUMP="False"
 TRAIN="True"
 TEST="True"

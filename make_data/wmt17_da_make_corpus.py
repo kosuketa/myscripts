@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[68]:
+# In[29]:
 
 
 import os
 import sys
 
-#DATA_HOME = '/ahc/work3/kosuke-t/data/'
-DATA_HOME = sys.argv[-1]
+DATA_HOME = '/ahc/work3/kosuke-t/data/'
+#DATA_HOME = sys.argv[-1]
 
 DA_HOME = os.path.join(DATA_HOME, 'WMT/DAseg-wmt-newstest2017/ensembled')
 HUME_HOME = os.path.join(DATA_HOME, 'WMT/wmt17-metrics-task-package/manual-evaluation/hume-testset-round-2.tsv')
@@ -26,18 +26,18 @@ HYP_HOME = os.path.join(DATA_HOME, 'WMT/wmt17-metrics-task-package/input/wmt17-m
 SAVE_PATH_DA_GOOD_REDUP = os.path.join(DATA_HOME, 'WMT/wmt17_da_good_redup.pkl')
 SAVE_PATH_DA_SEG = os.path.join(DATA_HOME, 'WMT/wmt17_da_seg.pkl')
 
-SAVE_SRC_TRAIN = 'SRHDA/WMT15_17_DA_HUME/train.src'
-SAVE_REF_TRAIN = 'SRHDA/WMT15_17_DA_HUME/train.ref'
-SAVE_HYP_TRAIN = 'SRHDA/WMT15_17_DA_HUME/train.hyp'
-SAVE_LABEL_TRAIN = 'SRHDA/WMT15_17_DA_HUME/train.label'
-SAVE_SRC_VALID = 'SRHDA/WMT15_17_DA_HUME/valid.src'
-SAVE_REF_VALID = 'SRHDA/WMT15_17_DA_HUME/valid.ref'
-SAVE_HYP_VALID = 'SRHDA/WMT15_17_DA_HUME/valid.hyp'
-SAVE_LABEL_VALID = 'SRHDA/WMT15_17_DA_HUME/valid.label'
-SAVE_SRC_TEST = 'SRHDA/WMT15_17_DA_HUME/test.src'
-SAVE_REF_TEST = 'SRHDA/WMT15_17_DA_HUME/test.ref'
-SAVE_HYP_TEST = 'SRHDA/WMT15_17_DA_HUME/test.hyp'
-SAVE_LABEL_TEST = 'SRHDA/WMT15_17_DA_HUME/test.label'
+SAVE_SRC_TRAIN = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/train.src')
+SAVE_REF_TRAIN = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/train.ref')
+SAVE_HYP_TRAIN = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/train.hyp')
+SAVE_LABEL_TRAIN = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/train.label')
+SAVE_SRC_VALID = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/valid.src')
+SAVE_REF_VALID = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/valid.ref')
+SAVE_HYP_VALID = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/valid.hyp')
+SAVE_LABEL_VALID = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/valid.label')
+SAVE_SRC_TEST = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/test.src')
+SAVE_REF_TEST = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/test.ref')
+SAVE_HYP_TEST = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/test.hyp')
+SAVE_LABEL_TEST = os.path.join(DATA_HOME,'SRHDA/WMT15_17_DA_HUME/test.label')
 
 langs_news = ['cs-en', 'de-en', 'en-cs', 'en-de', 'en-fi', 'en-lv', 'en-ru', 
               'en-tr', 'en-zh', 'fi-en', 'lv-en', 'ru-en', 'tr-en', 'zh-en']
@@ -71,9 +71,10 @@ import pandas as pd
 import numpy as np
 import copy
 from  tqdm import tqdm
+import random
 
 
-# In[69]:
+# In[15]:
 
 
 def load_file(filename):
@@ -102,7 +103,7 @@ for lang in langs_news:
 
 # ↓DARR
 
-# In[70]:
+# In[16]:
 
 
 # DArr = load_file(DARR_HOME)
@@ -128,7 +129,7 @@ for lang in langs_news:
 
 # DA for train
 
-# In[74]:
+# In[17]:
 
 
 filename_good_redup = {lang:'' for lang in langs_news}
@@ -209,7 +210,7 @@ corpus_good_redup, type_set = make_corpus_good_stnd_redup(langs_news, DA_data_go
 corpus_seg_scores, sys_dic = make_corpus_seg_scores(DA_data_seg_scores)
 
 
-# In[75]:
+# In[18]:
 
 
 print('good redup')
@@ -233,7 +234,7 @@ for lang in langs_news:
 print()
 
 
-# In[76]:
+# In[19]:
 
 
 print('saving {}'.format(SAVE_PATH_DA_GOOD_REDUP))
@@ -245,33 +246,165 @@ with open(SAVE_PATH_DA_SEG, mode='wb') as w:
     pickle.dump(corpus_seg_scores, w)
 
 
-# In[16]:
+# In[20]:
 
 
-# SRC_TRAIN17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/train.src"))
-# SRC_VALID17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/valid.src"))
-# SRC_TEST17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/test.src"))
-# REF_TRAIN17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/train.ref"))
-# REF_VALID17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/valid.ref"))
-# REF_TEST17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/test.ref"))
-# HYP_TRAIN17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/train.hyp"))
-# HYP_VALID17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/valid.hyp"))
-# HYP_TEST17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/test.hyp"))
-# LABEL_TRAIN17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/train.label"))
-# LABEL_VALID17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/valid.label"))
-# LABEL_TEST17 = load_file(os.path.join(DATA_HOME, "SRHDA/WMT15_17_DA/test.label"))
+def load_pickle(filename):
+    if not os.path.isfile(filename):
+        print('{} does not exist'.format(filename))
+        exit(-2)
+    data = None
+    with open(filename, mode='rb') as r:
+        data = pickle.load(r)
+    return data
+
+# return True when duplicated
+def dup_check(train_data, valid_data):
+    flag = False
+    duplicate_dic = {}
+    dup_index = []
+    for i, val in enumerate(valid_data):
+        key = (val['lang'], val['year'], val['sid'])
+        if key not in duplicate_dic:
+            duplicate_dic[key] = [i]
+        else:
+            duplicate_dic[key].append(i)
+    for i, trn in enumerate(train_data):
+        key = (trn['lang'], trn['year'], trn['sid'])
+        if key in duplicate_dic:
+            flag = True
+            dup_index.append({'train':i, 'valid':duplicate_dic[key]})
+    return flag, dup_index
+            
+
+def split_data(Alldata, ratio, exception_index, duplication=False):
+    
+    all_index = [i for i in range(len(Alldata))]
+    valid_index = random.sample(list(set(all_index)-set(exception_index)), int((len(Alldata)-len(exception_index))*ratio))
+    train_index = list(set(all_index)-set(valid_index))
+
+    train_data = []
+    valid_data = []
+    for idx in all_index:
+        if idx in train_index:
+            train_data.append(copy.deepcopy(Alldata[idx]))
+        else:
+            valid_data.append(copy.deepcopy(Alldata[idx]))
+    
+    return train_data, valid_data
+
+def get_dup_index(Alldata):
+    exception_index = []
+    dup_set = {}
+    for idx, data in enumerate(Alldata):
+        key = (data['lang'], data['year'], data['sid'])
+        if key not in dup_set:
+            dup_set[key] = [idx]
+        else:
+            exception_index.extend(dup_set[key])
+            exception_index.append(idx)
+    exception_index = sorted(list(set(exception_index)))
+    return exception_index, dup_set
 
 
-# In[17]:
+# In[24]:
 
 
+valid_ratio = 0.1
+
+SAVE_HOME = os.path.join(DATA_HOME, 'WMT')
+
+Alldata15_16 = []
+Alldata15_16.extend(load_pickle(os.path.join(SAVE_HOME, 'wmt15_da.pkl')))
+Alldata15_16.extend(load_pickle(os.path.join(SAVE_HOME, 'wmt16_da.pkl')))
+Alldata_langs = {}
+for data in Alldata15_16:
+    lang = data['lang']
+    if lang not in Alldata_langs:
+        Alldata_langs[lang] = []
+    Alldata_langs[lang].append(data)
+
+train_data_langs = {}
+valid_data_langs = {}
+for lang in Alldata_langs.keys():
+#     print('splitting {} data'.format(lang))
+    exception_index, dup_set = get_dup_index(Alldata_langs[lang])
+    train_data, valid_data = split_data(Alldata_langs[lang], valid_ratio, exception_index, duplication=False)
+    train_data_langs[lang] = train_data
+    valid_data_langs[lang] = valid_data
+
+Da = load_pickle(os.path.join(SAVE_HOME, 'wmt17_da_seg.pkl'))
+test_data_langs = {}
+for data in Da:
+    lang = data['lang']
+    if lang not in test_data_langs:
+        test_data_langs[lang] = []
+    test_data_langs[lang].append(data)
 
 
-
-# In[14]:
-
+# In[26]:
 
 
+src_train = []
+ref_train = []
+hyp_train = []
+label_train = []
+
+src_valid = []
+ref_valid = []
+hyp_valid = []
+label_valid = []
+
+src_test = []
+ref_test = []
+hyp_test = []
+label_test = []
+
+for lang in Alldata_langs.keys():
+    for tdata in train_data_langs[lang]:
+        src_train.append('{}\t{}'.format(tdata['src'], lang))
+        ref_train.append('{}\t{}'.format(tdata['ref'], lang))
+        hyp_train.append('{}\t{}'.format(tdata['hyp'], lang))
+        label_train.append('{}\t{}'.format(tdata['label'], lang))
+    for vdata in valid_data_langs[lang]:
+        src_valid.append('{}\t{}'.format(vdata['src'], lang))
+        ref_valid.append('{}\t{}'.format(vdata['ref'], lang))
+        hyp_valid.append('{}\t{}'.format(vdata['hyp'], lang))
+        label_valid.append('{}\t{}'.format(vdata['label'], lang))   
+for lang in test_data_langs.keys():    
+    for tsdata in test_data_langs[lang]:
+        src_test.append('{}\t{}'.format(tsdata['src'], lang))
+        ref_test.append('{}\t{}'.format(tsdata['ref'], lang))
+        hyp_test.append('{}\t{}'.format(tsdata['hyp'], lang))
+        label_test.append('{}\t{}'.format(tsdata['label'], lang))  
+
+
+# In[27]:
+
+
+def writeout(filename, obj):
+    with open(filename, mode='w', encoding='utf-8') as w:
+        for d in obj:
+            w.write(d+os.linesep)
+
+
+# In[30]:
+
+
+writeout(SAVE_SRC_TRAIN, src_train)
+writeout(SAVE_REF_TRAIN, ref_train)
+writeout(SAVE_HYP_TRAIN, hyp_train)
+writeout(SAVE_LABEL_TRAIN, label_train)
+
+writeout(SAVE_SRC_VALID, src_valid)
+writeout(SAVE_REF_VALID, ref_valid)
+writeout(SAVE_HYP_VALID, hyp_valid)
+writeout(SAVE_LABEL_VALID, label_valid)
+
+writeout(SAVE_SRC_TEST, src_test)
+writeout(SAVE_REF_TEST, ref_test)
+writeout(SAVE_HYP_TEST, hyp_test)
+writeout(SAVE_LABEL_TEST, label_test)
 
 
 # In[ ]:
