@@ -17,10 +17,16 @@ MODEL_NAME="xlm-roberta-large"
 #LANGS="en-cs,en-de,en-fi,en-gu,en-kk,en-lt,en-ru,en-zh"
 
 # lang for WMT18 for all-all
-LANGS="cs-en,de-en,en-cs,en-de,en-et,en-fi,en-ru,en-tr,en-zh,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+#LANGS="cs-en,de-en,en-cs,en-de,en-et,en-fi,en-ru,en-tr,en-zh,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+# lang for WMT18 for all-en
+#LANGS="cs-en,de-en,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+# lang for WMT18 for en-all
+#LANGS="en-cs,en-de,en-et,en-fi,en-ru,en-tr,en-zh"
 
-# lang for WMT17
-LANGS="cs-en,de-en,lv-en,fi-en,ro-en,ru-en,tr-en,zh-en"
+# lang for WMT17 for all-all
+LANGS="cs-en,de-en,en-ru,en-zh,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+# lang for WMT17 all-en
+#LANGS="cs-en,de-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
 
 # lang for XLM15
 # LANGS="de-en,ru-en,tr-en,zh-en"
