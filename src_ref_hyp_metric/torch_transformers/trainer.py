@@ -649,10 +649,10 @@ def main():
             results = pickle.load(r) 
 
     best_valid_pearson_path = os.path.join(args.tmp_path, 'best_valid_pearson.pkl')
-    if not os.path.isfile(best_valid_pearsons_path):
+    if not os.path.isfile(best_valid_pearson_path):
         best_valid_pearson = {'optimizer':'', 'batch_size':0, 'n_trial':0, 'epoch':0, 'pearson':-1.0}
     else:
-        with open(best_valid_pearsons_path, mode='rb') as r:
+        with open(best_valid_pearson_path, mode='rb') as r:
             best_valid_pearson = pickle.load(r)
     
     lang_availables = [] # only for test
