@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[3]:
 
 
 import os
@@ -19,7 +19,7 @@ MODELS = utils.MODELS
 DEST_DIR = sys.argv[-1]
 
 
-# In[ ]:
+# In[2]:
 
 
 for key in MODELS.keys():
@@ -43,9 +43,9 @@ for key in MODELS.keys():
 # In[6]:
 
 
-# # tokenizer = TokenizerClass.from_pretrained(SAVE_DIR)
-from transformers import BertModel
-model = ReformerModel.from_pretrained('cl-tohoku/bert-base-japanese')
+# # # tokenizer = TokenizerClass.from_pretrained(SAVE_DIR)
+# from transformers import BertModel
+# model = ReformerModel.from_pretrained('cl-tohoku/bert-base-japanese')
 
 
 # In[ ]:
