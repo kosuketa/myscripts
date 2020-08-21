@@ -23,7 +23,6 @@ import random
 import math
 from tqdm import tqdm
 import torch
-from apex import amp
 from torch import optim
 from typing import Tuple
 from torch.nn.utils.rnn import pad_sequence

@@ -139,7 +139,7 @@ def get_tokenizer_class(model_name):
     if model_name in MODELS['bert']:
         return BertTokenizer
     elif model_name in MODELS['xlm']:
-        return XlmTokenizer
+        return XLMTokenizer
     elif model_name in MODELS['xlm-r']:
         return XLMRobertaTokenizer
     elif model_name in MODELS['roberta']:
@@ -154,7 +154,7 @@ def get_model_class(model_name):
     if model_name in MODELS['bert']:
         return BertModel
     elif model_name in MODELS['xlm']:
-        return XlmModel
+        return XLMModel
     elif model_name in MODELS['xlm-r']:
         return XLMRobertaModel
     elif model_name in MODELS['roberta']:
@@ -169,7 +169,7 @@ def get_config_class(model_name):
     if model_name in MODELS['bert']:
         return BertConfig
     elif model_name in MODELS['xlm']:
-        return XlmConfig
+        return XLMConfig
     elif model_name in MODELS['xlm-r']:
         return XLMRobertaConfig
     elif model_name in MODELS['roberta']:
