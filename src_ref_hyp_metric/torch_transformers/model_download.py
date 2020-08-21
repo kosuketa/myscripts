@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
+# In[5]:
 
 
 import os
@@ -15,11 +15,11 @@ import sys
 MODELS = utils.MODELS
 
 # model_name = 'xlm-roberta-large'
-#DEST_DIR = '/home/is/kosuke-t/tmp'
-DEST_DIR = sys.argv[-1]
+DEST_DIR = '/ahc/work3/kosuke-t/model'
+#DEST_DIR = sys.argv[-1]
 
 
-# In[2]:
+# In[ ]:
 
 
 for key in MODELS.keys():

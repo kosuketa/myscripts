@@ -247,6 +247,7 @@ else:
     args.use_token_type_ids = False
 
 args.batch_sizes = [int(x.split('=')[-1]) for x in args.batch_size.split('/')]
+args.batch_size = args.batch_sizes[0]
 args.optimizers = args.optimizer.split('/')
 
 txt = ""
