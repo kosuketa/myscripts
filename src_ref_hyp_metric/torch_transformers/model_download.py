@@ -19,7 +19,7 @@ MODELS = utils.MODELS
 DEST_DIR = sys.argv[-1]
 
 
-# In[2]:
+# In[ ]:
 
 
 for key in MODELS.keys():
@@ -37,14 +37,15 @@ for key in MODELS.keys():
 
         tokenizer.save_pretrained(SAVE_DIR)
         model.save_pretrained(SAVE_DIR)
+        config.save_pretrained(SAVE_DIR)
 
 
 # In[6]:
 
 
 # # tokenizer = TokenizerClass.from_pretrained(SAVE_DIR)
-# from transformers import BertModel
-# model = BertModel.from_pretrained('cl-tohoku/bert-base-japanese')
+from transformers import BertModel
+model = ReformerModel.from_pretrained('cl-tohoku/bert-base-japanese')
 
 
 # In[ ]:

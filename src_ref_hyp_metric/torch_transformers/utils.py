@@ -92,9 +92,9 @@ MODELS = {'xlm':['xlm-mlm-en-2048',
                     'roberta-base-openai-detector',
                     'roberta-large-openai-detector'],
          'reformer':['reformer-enwik8', 
-                     'reformer-crime-and-punishment', 
-                     'google/reformer-enwik8',
-                     'google/reformer-crime-and-punishment']
+                     'reformer-crime-and-punishment']
+#                      'google/reformer-enwik8',
+#                      'google/reformer-crime-and-punishment']
          }
 
 

@@ -135,6 +135,7 @@ parser.add_argument('--hyp_src_hyp_ref', type=bool_flag, default=False)
 parser.add_argument('--hyp_src_ref', type=bool_flag, default=False)
 
 # data setting
+parser.add_argument('--model_path', type=str, default='', help='transformer model directory')
 parser.add_argument('--src_train', type=str, default='', help='src data path for train')
 parser.add_argument('--src_valid', type=str, default='', help='src data path for train')
 parser.add_argument('--src_test', type=str, default='', help='src data path for train')
@@ -175,6 +176,11 @@ elif args.empty_dump:
 if args.save_model_path == '':
     args.save_model_path = os.path.join(args.tmp_path, args.save_model_name)
 
+if not os.path.isdir(args.model_path):
+    raise OSError
+    print('model path :{} does not exist'.format(args.model_path))
+args.model_path = os.path.join(args.model_path, args.model_name)
+    
 logging.basicConfig(filename=os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today())), level=logging.INFO)
 args.logger = logging
 # logger = setup_logger(os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today())))
@@ -498,7 +504,7 @@ def _run_train(best_valid_pearson,
                ModelClass, ConfigClass, 
                config):
     
-    model = ModelClass.from_pretrained(args.model_name, config=config)
+    model = ModelClass.from_pretrained(args.model_path, config=config)
     model.config.num_labels = 1
 
     if args.hyp_src_hyp_ref:
@@ -568,7 +574,7 @@ def _run_test(test_dataloader, ModelClass, config, results, args, lang_available
     
     args.logger.info('loading the best model for testing!')
     checkpoint = torch.load(checkpoint_path)
-    model = ModelClass.from_pretrained(args.model_name, config=config)
+    model = ModelClass.from_pretrained(args.model_path, config=config)
 
     if args.hyp_src_hyp_ref:
         model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
@@ -607,8 +613,8 @@ def main():
     TokenizerClass = utils.get_tokenizer_class(args.model_name)
     ModelClass = utils.get_model_class(args.model_name)
     ConfigClass = utils.get_config_class(args.model_name)
-    tokenizer = TokenizerClass.from_pretrained(args.model_name)
-    config = ConfigClass.from_pretrained(args.model_name)
+    tokenizer = TokenizerClass.from_pretrained(args.model_path)
+    config = ConfigClass.from_pretrained(args.model_path)
     data_trans = Data_Transformer(args, tokenizer)
     args.model_config = config
     DATA = {}
