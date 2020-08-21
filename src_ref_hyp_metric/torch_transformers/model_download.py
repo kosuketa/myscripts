@@ -39,11 +39,12 @@ for key in MODELS.keys():
         model.save_pretrained(SAVE_DIR)
 
 
-# In[4]:
+# In[6]:
 
 
-# tokenizer = TokenizerClass.from_pretrained(SAVE_DIR)
-# model = ModelClass.from_pretrained(SAVE_DIR)
+# # tokenizer = TokenizerClass.from_pretrained(SAVE_DIR)
+# from transformers import BertModel
+# model = BertModel.from_pretrained('cl-tohoku/bert-base-japanese')
 
 
 # In[ ]:
