@@ -15,10 +15,11 @@ import sys
 MODELS = utils.MODELS
 
 # model_name = 'xlm-roberta-large'
-DEST_DIR = '/home/is/kosuke-t/tmp'
+#DEST_DIR = '/home/is/kosuke-t/tmp'
+DEST_DIR = sys.argv[-1]
 
 
-# In[ ]:
+# In[2]:
 
 
 for key in MODELS.keys():
