@@ -19,7 +19,7 @@ DEST_DIR = '/ahc/work3/kosuke-t/model'
 #DEST_DIR = sys.argv[-1]
 
 
-# In[ ]:
+# In[6]:
 
 
 for key in MODELS.keys():
