@@ -669,7 +669,7 @@ def main():
                                                                   train_dataloader, 
                                                                   valid_dataloader,
                                                                   args, results, ModelClass, ConfigClass, config)
-                    with open(best_valid_pearsons_path, mode='wb') as w:
+                    with open(best_valid_pearson_path, mode='wb') as w:
                         pickle.dump(best_valid_pearson, w)
                          
         args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
