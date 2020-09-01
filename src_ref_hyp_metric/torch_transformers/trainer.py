@@ -43,7 +43,6 @@ random.seed(77)
 from dataloader_debug import Dataset, Data_Transformer
 from pytorch_memlab import profile
 import datetime
-# from logging import getLogger, StreamHandler, Formatter, FileHandler, DEBUG
 import logging
 
 
