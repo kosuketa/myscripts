@@ -179,12 +179,13 @@ if not os.path.isdir(args.model_path):
     raise OSError
     print('model path :{} does not exist'.format(args.model_path))
 args.model_path = os.path.join(args.model_path, args.model_name)
-    
-logging.basicConfig(filename=os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today())), level=logging.DEBUG,  format="%(asctime)s %(levelname)-7s %(message)s")
+
+log_file_name = os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today()))
+logging.basicConfig(filename=log_file_name, level=logging.DEBUG,  format="%(asctime)s %(levelname)-7s %(message)s")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-log_file = logging.FileHandler('sample/test2.log')
+log_file = logging.FileHandler(log_file_name)
 logger.addHandler(log_file)
 args.logger = logger
 import pdb;pdb.set_trace()
