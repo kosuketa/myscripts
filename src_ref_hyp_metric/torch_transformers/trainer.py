@@ -564,9 +564,10 @@ def _run_train(best_valid_pearson,
     
     with open(os.path.join(args.tmp_path, 'result.pkl'), mode='wb') as w:
         pickle.dump(results, w)
+        
     del model
     torch.cuda.empty_cache()
-    
+    import pdb;pdb.set_trace()
     return (best_valid_pearson, results)
 
 
