@@ -547,7 +547,7 @@ def _run_train(best_valid_pearson,
 
         
         end_time = time.time()
-        args.logger.info('exp_id:{}, n_trial:{}, {}epoch finished!　　Took {}m{}s'.format(args.exp_id, args.n_trial, n_epoch, int((end_time-start_time)/60), int((end_time-start_time)%60)))
+        args.logger.info('exp_id:{}, n_trial:{}, epoch:{} finished!　　Took {}m{}s'.format(args.exp_id, args.n_trial, n_epoch, int((end_time-start_time)/60), int((end_time-start_time)%60)))
         args.logger.info('lr = {}'.format(optimizer.param_groups[0]['lr']))
         if args.train:
             args.logger.info('train loss_mean:{:.4f}, pearson:{:.4f}'.format(results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1],
@@ -649,7 +649,7 @@ def main():
 
     best_valid_pearson_path = os.path.join(args.tmp_path, 'best_valid_pearson.pkl')
     if not os.path.isfile(best_valid_pearson_path):
-        best_valid_pearson = {'optimizer':'', 'batch_size':0, 'n_trial':0, 'epoch':0, 'pearson':-1.0}
+        best_valid_pearson = {'optimizer':'', 'batch_size':0, 'n_trial':1, 'epoch':1, 'pearson':-1.0}
     else:
         with open(best_valid_pearson_path, mode='rb') as r:
             best_valid_pearson = pickle.load(r)
@@ -663,6 +663,7 @@ def main():
                 args.batch_size = bt
                 for n_trial in range(1, args.trial_times+1):
                     args.n_trial = n_trial
+                    arga.logger.info('starting exp_id:{}, n_trial:{}, epoch:{} '.format(args.exp_id, args.n_trial, n_epoch))
                     if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
                         best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                                   train_dataloader, 
