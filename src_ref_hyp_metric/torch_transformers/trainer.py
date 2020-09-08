@@ -504,7 +504,7 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
 # In[1]:
 
 
-# @profile
+@profile
 def _run_train(best_valid_pearson, 
                train_dataloader, valid_dataloader,
                args, results, 
@@ -673,6 +673,7 @@ def main():
                 args.batch_size = bt
                 for n_trial in range(1, args.trial_times+1):
                     args.n_trial = n_trial
+                    import pdb;pdb.set_trace()
                     if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
                         best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                                   train_dataloader, 
