@@ -565,7 +565,7 @@ def _run_train(best_valid_pearson,
     with open(os.path.join(args.tmp_path, 'result.pkl'), mode='wb') as w:
         pickle.dump(results, w)
     
-    return (best_valid_pearson, best_valid_epochs, results)
+    return (best_valid_pearson, results)
 
 
 # In[ ]:
