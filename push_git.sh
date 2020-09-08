@@ -2,4 +2,4 @@
 
 git add *
 git commit -m "updated"
-git push
+git push < kosuketa
