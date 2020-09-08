@@ -567,7 +567,7 @@ def _run_train(best_valid_pearson,
         
     del model
     torch.cuda.empty_cache()
-    import pdb;pdb.set_trace()
+
     return (best_valid_pearson, results)
 
 
@@ -673,14 +673,13 @@ def main():
                 args.batch_size = bt
                 for n_trial in range(1, args.trial_times+1):
                     args.n_trial = n_trial
-                    import pdb;pdb.set_trace()
                     if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
                         best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                                   train_dataloader, 
                                                                   valid_dataloader,
                                                                   args, results, ModelClass, ConfigClass, config)
-                    with open(best_valid_pearson_path, mode='wb') as w:
-                        pickle.dump(best_valid_pearson, w)
+                        with open(best_valid_pearson_path, mode='wb') as w:
+                            pickle.dump(best_valid_pearson, w)
                     
                          
         args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
