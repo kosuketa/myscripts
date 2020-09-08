@@ -188,7 +188,7 @@ logger.setLevel(logging.DEBUG)
 log_file = logging.FileHandler(log_file_name)
 logger.addHandler(log_file)
 args.logger = logger
-import pdb;pdb.set_trace()
+
 # logger = setup_logger(os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today())))
 # args.logger = logger
 
