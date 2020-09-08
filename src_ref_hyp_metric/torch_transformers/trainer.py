@@ -175,12 +175,16 @@ elif args.empty_dump:
 if args.save_model_path == '':
     args.save_model_path = os.path.join(args.tmp_path, args.save_model_name)
 
+# tmp_files 
+args.tmp_files = []
+    
 if not os.path.isdir(args.model_path):
     raise OSError
     print('model path :{} does not exist'.format(args.model_path))
 args.model_path = os.path.join(args.model_path, args.model_name)
 
 log_file_name = os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today()))
+args.tmp_files.append(log_file_name)
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG,  format="%(asctime)s %(levelname)-7s %(message)s")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -259,8 +263,10 @@ args.optimizers = args.optimizer.split('/')
 txt = ""
 for key, value in args.__dict__.items():
     txt += '{}:{}{}'.format(str(key), str(value), os.linesep)
-with open(os.path.join(args.tmp_path, 'arguments.txt'), mode='w', encoding='utf-8') as w:
+arguments_file = os.path.join(args.tmp_path, 'arguments.txt')
+with open(arguments_file, mode='w', encoding='utf-8') as w:
     w.write(txt)
+args.tmp_files.append(arguments_file)
 
 
 # In[ ]:
@@ -443,7 +449,10 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results,
         checkpoint = {'model': model.state_dict(),
                       'optimizer': optimizer.state_dict(),
                       'amp': apex.amp.state_dict()}
-        torch.save(checkpoint, os.path.join(args.tmp_path,'best_valid_checkpoint.pth'))
+        checkpoint_file = os.path.join(args.tmp_path,'best_valid_checkpoint.pth')
+        torch.save(checkpoint, checkpoint_file)
+        if checkpoint_file not in args.tmp_files:
+            args.tmp_files.append(checkpoint_file)
         args.logger.info('finished saving!')
 
     return model, valid_dataloader, mse, optimizer, args, results, best_valid_loss, best_valid_pearson
@@ -504,7 +513,6 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
 # In[1]:
 
 
-@profile
 def _run_train(best_valid_pearson, 
                train_dataloader, valid_dataloader,
                args, results, 
@@ -562,8 +570,11 @@ def _run_train(best_valid_pearson,
             args.logger.info('valid loss_mean:{:.4f}, pearson:{:.4f}'.format(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1], 
                                                                              results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]))
     
-    with open(os.path.join(args.tmp_path, 'result.pkl'), mode='wb') as w:
+    result_file = os.path.join(args.tmp_path, 'result.pkl')
+    with open(result_file, mode='wb') as w:
         pickle.dump(results, w)
+    if result_file not in args.tmp_files:
+        args.tmp_files.append(result_file)
         
     del model
     torch.cuda.empty_cache()
@@ -643,6 +654,8 @@ def main():
                                                   collate_fn=data_trans.collate_fn, shuffle=False)
     
     result_path = os.path.join(args.tmp_path, 'result.pkl')
+    if result_path not in args.tmp_files:
+        args.tmp_files.append(result_path)
     if not os.path.isfile(result_path):
         results = {mode:
                        {opt:
@@ -658,6 +671,8 @@ def main():
             results = pickle.load(r) 
 
     best_valid_pearson_path = os.path.join(args.tmp_path, 'best_valid_pearson.pkl')
+    if best_valid_pearson_path not in args.tmp_files:
+        args.tmp_files.append(best_valid_pearson_path)
     if not os.path.isfile(best_valid_pearson_path):
         best_valid_pearson = {'optimizer':'', 'batch_size':0, 'n_trial':1, 'epoch':1, 'pearson':-1.0}
     else:
@@ -706,13 +721,14 @@ def main():
         performance_summary_filepath = os.path.join(args.tmp_path, 'final_pearformance.txt')
         with open(performance_summary_filepath, mode='w', encoding='utf-8') as w:
             w.write(txt)
+        if performance_summary_filepath not in args.tmp_files:
+            args.tmp_files.append(performance_summary_filepath)
     else:
         pass
     
     args.logger.info('moving tmp files to dump dir')
-    for f in os.scandir(args.tmp_path):
-        tmp_file = os.path.join(args.tmp_path, f.name)
-        shutil.move(tmp_file, args.dump_path)
+    for f in args.tmp_files:
+        shutil.move(f, args.dump_path)
 
 
 # In[ ]:
