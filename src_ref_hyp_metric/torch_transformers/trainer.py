@@ -663,7 +663,7 @@ def main():
                 args.batch_size = bt
                 for n_trial in range(1, args.trial_times+1):
                     args.n_trial = n_trial
-                    arga.logger.info('starting exp_id:{}, n_trial:{}, epoch:{} '.format(args.exp_id, args.n_trial, n_epoch))
+                    args.logger.info('starting exp_id:{}, n_trial:{}, epoch:{} '.format(args.exp_id, args.n_trial, n_epoch))
                     if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
                         best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                                   train_dataloader, 
