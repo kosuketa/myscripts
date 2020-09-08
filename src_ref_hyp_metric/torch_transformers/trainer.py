@@ -181,7 +181,13 @@ if not os.path.isdir(args.model_path):
 args.model_path = os.path.join(args.model_path, args.model_name)
     
 logging.basicConfig(filename=os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today())), level=logging.DEBUG,  format="%(asctime)s %(levelname)-7s %(message)s")
-args.logger = logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+log_file = logging.FileHandler('sample/test2.log')
+logger.addHandler(log_file)
+args.logger = logger
+import pdb;pdb.set_trace()
 # logger = setup_logger(os.path.join(args.tmp_path, '{}.{}.log'.format(args.exp_name, datetime.date.today())))
 # args.logger = logger
 
