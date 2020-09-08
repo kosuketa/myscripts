@@ -564,6 +564,8 @@ def _run_train(best_valid_pearson,
     
     with open(os.path.join(args.tmp_path, 'result.pkl'), mode='wb') as w:
         pickle.dump(results, w)
+    del model
+    torch.cuda.empty_cache()
     
     return (best_valid_pearson, results)
 
@@ -677,6 +679,7 @@ def main():
                                                                   args, results, ModelClass, ConfigClass, config)
                     with open(best_valid_pearson_path, mode='wb') as w:
                         pickle.dump(best_valid_pearson, w)
+                    
                          
         args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
         args.logger.info('Best Hyper-paramer : {}, batch={}, n_trial={}, epoch={}'.format(best_valid_pearson['optimizer'],
