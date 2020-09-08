@@ -194,8 +194,11 @@ class Dataset(torch.utils.data.Dataset):
         r_data = []
         for i in range(len(DATA[forms[0]])):
             tmp_dic = {}
+            if DATA[forms[0]][i].split('\t')[1] not in self.args.langs:
+                continue
             for form in forms:
                 d = DATA[form][i]
+                lang = d.split('\t')[1]
                 if form == 'label':
                     tmp_dic['{}'.format(form)] = float(d.split('\t')[0])
                 else:
@@ -203,9 +206,9 @@ class Dataset(torch.utils.data.Dataset):
                 if 'lang' in tmp_dic:
 #                     if not tmp_dic['lang'] == d.split('\t')[1]:
 #                         import pdb;pdb.set_trace()
-                    assert tmp_dic['lang'] == d.split('\t')[1]
+                    assert tmp_dic['lang'] == lang
                 else:
-                    tmp_dic['lang'] = d.split('\t')[1]
+                    tmp_dic['lang'] = lang
             if 'src' in self.args.forms:
                 tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'], tmp_dic['raw_src'], tokenizer)
                 tmp_dic['seg_hyp_src'] = self.get_seqment_id(tmp_dic['tok_hyp_src'], bos_id, sep_id, eos_id)
@@ -227,6 +230,8 @@ class Dataset(torch.utils.data.Dataset):
                 tmp_dic['seg_hyp_ref'] = self.get_seqment_id(tmp_dic['tok_hyp_ref'], bos_id, sep_id, eos_id)
                 if self.args.lang_id_bool:
                     tmp_dic['lang_hyp_ref'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_ref'], sep_id, eos_id, use_src=False)
+            if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
+                import pdb;pdb.set_trace()
             r_data.append(tmp_dic)
         return r_data
 

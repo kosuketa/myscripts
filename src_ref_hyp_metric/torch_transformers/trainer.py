@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[ ]:
-
-
 import os
 from pprint import pprint
 import pickle
@@ -44,8 +40,6 @@ from dataloader_debug import Dataset, Data_Transformer
 from pytorch_memlab import profile
 import datetime
 import logging
-
-
 # In[ ]:
 
 
@@ -365,8 +359,8 @@ def run_model(model, batch, args, loss_fn, optimizer, train=False, getVector=Fal
     
     if getVector:
         return float(loss.item()), preds, labels, hs
-    else:
-        return float(loss.item()), preds, labels
+    
+    return float(loss.item()), preds, labels
 
 
 # In[ ]:
