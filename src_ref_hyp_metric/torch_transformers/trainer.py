@@ -250,9 +250,7 @@ if utils.get_model_type in ['bert']:
 else:
     args.use_token_type_ids = False
 
-args.batch_sizes = [int(x.split('=')[-1]) for x in args.batch_size.split('/')]
-args.batch_size = args.batch_sizes[0]
-args.optimizers = args.optimizer.split('/')
+args.batch_size = args.batch_size.split('=')[-1]
 
 txt = ""
 for key, value in args.__dict__.items():
@@ -563,15 +561,14 @@ def _run_train(best_valid_pearson,
                                                                              results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]))
             args.logger.info('valid loss_mean:{:.4f}, pearson:{:.4f}'.format(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1], 
                                                                              results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]))
-    
+        torch.cuda.empty_cache()
     result_file = os.path.join(args.tmp_path, 'result.pkl')
     with open(result_file, mode='wb') as w:
         pickle.dump(results, w)
     if result_file not in args.tmp_files:
         args.tmp_files.append(result_file)
         
-    del model
-    torch.cuda.empty_cache()
+#     del model
 
     return (best_valid_pearson, results)
 
@@ -699,21 +696,14 @@ def main():
     
     model = build_model(ModelClass, config, args)
     if args.train:
-        for opt in args.optimizers:
-            args.optimizer = opt
-            for bt in args.batch_sizes:
-                args.batch_size = bt
-                for n_trial in range(1, args.trial_times+1):
-                    args.n_trial = n_trial
-                    model = reload_model(model, ModelClass, config, args)
-                    if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
-                        best_valid_pearson, results =  _run_train(best_valid_pearson, 
-                                                                  train_dataloader, 
-                                                                  valid_dataloader,
-                                                                  args, results, ModelClass, ConfigClass, model,
-                                                                  config)
-                        with open(best_valid_pearson_path, mode='wb') as w:
-                            pickle.dump(best_valid_pearson, w)
+        if len(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson']) != args.epoch_size:
+            best_valid_pearson, results =  _run_train(best_valid_pearson, 
+                                                      train_dataloader, 
+                                                      valid_dataloader,
+                                                      args, results, ModelClass, ConfigClass, model,
+                                                      config)
+            with open(best_valid_pearson_path, mode='wb') as w:
+                pickle.dump(best_valid_pearson, w)
                     
                          
         args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
