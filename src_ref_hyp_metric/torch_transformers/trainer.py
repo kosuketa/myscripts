@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
+
+# In[ ]:
+
+
 import os
 from pprint import pprint
 import pickle
@@ -25,7 +29,8 @@ from torch import nn
 import utils
 from shutil import rmtree
 import shutil
-import apex
+try:
+    import apex
 from torch import nn
 import torch.nn.functional as F
 import time
@@ -40,6 +45,8 @@ from dataloader_debug import Dataset, Data_Transformer
 from pytorch_memlab import profile
 import datetime
 import logging
+
+
 # In[ ]:
 
 
@@ -438,9 +445,13 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results,
         best_valid_pearson['batch_size'] = args.batch_size
         best_valid_pearson['epoch'] = n_epoch
         args.logger.info('saving a model!')
-        checkpoint = {'model': model.state_dict(),
-                      'optimizer': optimizer.state_dict(),
-                      'amp': apex.amp.state_dict()}
+        if args.amp:
+            checkpoint = {'model': model.state_dict(),
+                          'optimizer': optimizer.state_dict(),
+                          'amp': apex.amp.state_dict()}
+        else:
+            checkpoint = {'model': model.state_dict(),
+                          'optimizer': optimizer.state_dict()}
         checkpoint_file = os.path.join(args.tmp_path,'best_valid_checkpoint.pth')
         torch.save(checkpoint, checkpoint_file)
         if checkpoint_file not in args.tmp_files:
