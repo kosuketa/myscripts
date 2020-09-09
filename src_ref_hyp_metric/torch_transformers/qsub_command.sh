@@ -17,12 +17,18 @@ MODEL_PATH="${PROJECT_DISC}/model"
 MODEL_NAME="xlm-roberta-large"
 OPTIMIZER=("adam,lr=0.000009" "adam,lr=0.000006" "adam,lr=0.000003")
 BATCH_SIZE=("8" "4")
+
 DARR="False"
+
 HYP_REF="False"
 HYP_SRC="False"
 HYP_SRC_HYP_REF="True"
 HYP_SRC_REF="False"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
 EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+
 
 # lang for WMT19 all-all
 #LANGS="de-cs,de-en,de-fr,en-cs,en-de,en-fi,en-gu,en-kk,en-lt,en-ru,en-zh,fi-en,fr-de,gu-en,kk-en,lt-en,ru-en,zh-en"
