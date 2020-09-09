@@ -5,6 +5,7 @@
 #$ -v  PYTHONPATH="/home/ksudoh/kosuke-t/.pyenv/versions/3.6.9/envs/src_ref_hyp_metric/lib/python3.6/site-packages:$PYTHONPATH"
 #$ -m be
 #$ -M takahashi.kosuke.th0@is.naist.jp
+#$ -j y
 
 HOME="/home/ksudoh/kosuke-t"
 PROJECT_DISC="${HOME}/data_link"
