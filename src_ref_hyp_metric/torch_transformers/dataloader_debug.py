@@ -230,8 +230,7 @@ class Dataset(torch.utils.data.Dataset):
                 tmp_dic['seg_hyp_ref'] = self.get_seqment_id(tmp_dic['tok_hyp_ref'], bos_id, sep_id, eos_id)
                 if self.args.lang_id_bool:
                     tmp_dic['lang_hyp_ref'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_ref'], sep_id, eos_id, use_src=False)
-            if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
-                import pdb;pdb.set_trace()
+
             r_data.append(tmp_dic)
         return r_data
 
