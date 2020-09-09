@@ -554,7 +554,7 @@ def _run_train(best_valid_pearson,
 
         
         end_time = time.time()
-        args.logger.info('exp_id:{}, n_trial:{}, epoch:{} finished!　　Took {}m{}s'.format(args.exp_id, args.n_trial, n_epoch, int((end_time-start_time)/60), int((end_time-start_time)%60)))
+        args.logger.info('optimizer:{}, batch_size:{}, n_trial:{}, epoch:{} finished!　Took {}m{}s'.format(args.optimizer, args.batch_size, args.n_trial, n_epoch, int((end_time-start_time)/60), int((end_time-start_time)%60)))
         args.logger.info('lr = {}'.format(optimizer.param_groups[0]['lr']))
         if args.train:
             args.logger.info('train loss_mean:{:.4f}, pearson:{:.4f}'.format(results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1],
@@ -717,28 +717,28 @@ def main():
     if args.test:
         args.logger.info('running test')
         resutls, lang_availables = _run_test(test_dataloader, ModelClass, config, results, args, lang_availables, model)
-    with open(result_path, mode='wb') as w:
-        pickle.dump(results, w) 
-    args.logger.info('finished running test')
-    if not args.darr:
-        args.logger.info('--- Final Performance in Pearson---')
-        txt = ""
-        for lang in lang_availables:
-            txt += '{} : {:.3f}'.format(lang, results['test']['{}_pearson'.format(lang)]) + str(os.linesep)
-        txt += 'ave : {:.3f}'.format(np.mean([results['test']['{}_pearson'.format(lang)] for lang in lang_availables])) + str(os.linesep)
-        txt += 'all : {:.3f}'.format(results['test']['pearson']) + str(os.linesep)
-        args.logger.info(txt)
-        performance_summary_filepath = os.path.join(args.tmp_path, 'final_pearformance.txt')
-        with open(performance_summary_filepath, mode='w', encoding='utf-8') as w:
-            w.write(txt)
-        if performance_summary_filepath not in args.tmp_files:
-            args.tmp_files.append(performance_summary_filepath)
+        with open(result_path, mode='wb') as w:
+            pickle.dump(results, w) 
+        args.logger.info('finished running test')
+        if not args.darr:
+            args.logger.info('--- Final Performance in Pearson---')
+            txt = ""
+            for lang in lang_availables:
+                txt += '{} : {:.3f}'.format(lang, results['test']['{}_pearson'.format(lang)]) + str(os.linesep)
+            txt += 'ave : {:.3f}'.format(np.mean([results['test']['{}_pearson'.format(lang)] for lang in lang_availables])) + str(os.linesep)
+            txt += 'all : {:.3f}'.format(results['test']['pearson']) + str(os.linesep)
+            args.logger.info(txt)
+            performance_summary_filepath = os.path.join(args.tmp_path, 'final_pearformance.txt')
+            with open(performance_summary_filepath, mode='w', encoding='utf-8') as w:
+                w.write(txt)
+            if performance_summary_filepath not in args.tmp_files:
+                args.tmp_files.append(performance_summary_filepath)
     else:
         pass
     
-    args.logger.info('moving tmp files to dump dir')
-    for f in args.tmp_files:
-        shutil.move(f, args.dump_path)
+        args.logger.info('moving tmp files to dump dir')
+        for f in args.tmp_files:
+            shutil.move(f, args.dump_path)
 
 
 # In[ ]:
