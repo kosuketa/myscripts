@@ -31,6 +31,8 @@ from shutil import rmtree
 import shutil
 try:
     import apex
+except:
+    pass
 from torch import nn
 import torch.nn.functional as F
 import time
