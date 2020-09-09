@@ -567,8 +567,6 @@ def _run_train(best_valid_pearson,
         pickle.dump(results, w)
     if result_file not in args.tmp_files:
         args.tmp_files.append(result_file)
-        
-#     del model
 
     return (best_valid_pearson, results)
 
