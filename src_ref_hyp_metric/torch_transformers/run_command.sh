@@ -4,7 +4,7 @@ DATA_PATH="${PROJECT_DISC}/data/SRHDA/WMT15_17_DA_HUME"
 MODEL_PATH="${PROJECT_DISC}/model"
 MODEL_NAME="bert-base-uncased"
 OPTIMIZER=("adam,lr=0.000009" "adam,lr=0.000006" "adam,lr=0.000003")
-BATCH_SIZE=("batch=64" "batch=32" "batch=16")
+BATCH_SIZE=("64" "32" "16")
 
 
 # lang for WMT19 all-all
@@ -32,7 +32,7 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
             python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
             --exp_name "wmt17_all_to_all_${MODEL_NAME}" \
             --exp_id "0" \
-            --n_trial "${N_TRIAL}"
+            --n_trial "${N_TRIAL}" \
             --tmp_path "${HOME}/tmp/tmp_log/" \
             --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
             --model_name "${MODEL_NAME}" \

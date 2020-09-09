@@ -151,7 +151,6 @@ args = parser.parse_args()
 
 # make dump_path
 args.dump_path = os.path.join(os.path.join(args.dump_path, args.exp_name), args.exp_id)
-import pdb;pdb.set_trace()
 if not os.path.isdir(args.dump_path):
     os.makedirs(args.dump_path)
 elif args.empty_dump:
@@ -251,7 +250,7 @@ if utils.get_model_type in ['bert']:
 else:
     args.use_token_type_ids = False
 
-args.batch_size = args.batch_size.split('=')[-1]
+args.batch_size = int(args.batch_size)
 
 txt = ""
 for key, value in args.__dict__.items():
