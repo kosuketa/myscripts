@@ -710,7 +710,7 @@ def main():
                         best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                                   train_dataloader, 
                                                                   valid_dataloader,
-                                                                  args, results, ModelClass, ConfigClass, model
+                                                                  args, results, ModelClass, ConfigClass, model,
                                                                   config)
                         with open(best_valid_pearson_path, mode='wb') as w:
                             pickle.dump(best_valid_pearson, w)
