@@ -678,7 +678,7 @@ def main():
     if args.optimizer not in results['valid']:
         results['train'][args.optimizer] = {}
         results['valid'][args.optimizer] = {}
-    if 'batch='.format(args.batch_size) not in results['valid'][args.optimizer]:
+    if 'batch={}'.format(args.batch_size) not in results['valid'][args.optimizer]:
         results['train'][args.optimizer]['batch='.format(args.batch_size)] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
                                                                                for _ in range(args.trial_times)]
         results['valid'][args.optimizer]['batch='.format(args.batch_size)] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
