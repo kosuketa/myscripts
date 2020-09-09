@@ -733,12 +733,11 @@ def main():
                 w.write(txt)
             if performance_summary_filepath not in args.tmp_files:
                 args.tmp_files.append(performance_summary_filepath)
-    else:
-        pass
-    
+                
         args.logger.info('moving tmp files to dump dir')
         for f in args.tmp_files:
             shutil.move(f, args.dump_path)
+        
 
 
 # In[ ]:
