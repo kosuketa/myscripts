@@ -8,6 +8,8 @@
 #$ -j y
 
 HOME="/home/ksudoh/kosuke-t"
+source "${HOME}/.bashrc"
+
 PROJECT_DISC="${HOME}/data_link"
 DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
 
