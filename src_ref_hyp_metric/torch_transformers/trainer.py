@@ -679,9 +679,9 @@ def main():
         results['train'][args.optimizer] = {}
         results['valid'][args.optimizer] = {}
     if 'batch={}'.format(args.batch_size) not in results['valid'][args.optimizer]:
-        results['train'][args.optimizer]['batch='.format(args.batch_size)] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
+        results['train'][args.optimizer]['batch={}'.format(args.batch_size) ] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
                                                                                for _ in range(args.trial_times)]
-        results['valid'][args.optimizer]['batch='.format(args.batch_size)] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
+        results['valid'][args.optimizer]['batch={}'.format(args.batch_size) ] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
                                                                                for _ in range(args.trial_times)] 
     
     best_valid_pearson_path = os.path.join(args.tmp_path, 'best_valid_pearson.pkl')
@@ -697,7 +697,6 @@ def main():
     
     model = build_model(ModelClass, config, args)
     if args.train:
-        import pdb;pdb.set_trace()
         if len(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson']) != args.epoch_size:
             best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                       train_dataloader, 
