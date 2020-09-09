@@ -50,6 +50,12 @@ print('label')
 print(label[idx])
 
 
+# In[9]:
+
+
+del model
+
+
 # In[ ]:
 
 

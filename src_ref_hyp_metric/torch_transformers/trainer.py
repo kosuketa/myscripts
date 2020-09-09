@@ -510,20 +510,20 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
 def _run_train(best_valid_pearson, 
                train_dataloader, valid_dataloader,
                args, results, 
-               ModelClass, ConfigClass, 
+               ModelClass, ConfigClass, model,
                config):
     
-    model = ModelClass.from_pretrained(args.model_path, config=config)
-    model.config.num_labels = 1
+#     model = ModelClass.from_pretrained(args.model_path, config=config)
+#     model.config.num_labels = 1
 
-    if args.hyp_src_hyp_ref:
-        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
-    else:
-        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
+#     if args.hyp_src_hyp_ref:
+#         model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
+#     else:
+#         model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
 
     optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
     mse = nn.MSELoss()
-    model.to('cuda')
+#     model.to('cuda')
 
     if args.amp:
         model, optimizer = apex.amp.initialize(
@@ -579,7 +579,7 @@ def _run_train(best_valid_pearson,
 # In[ ]:
 
 
-def _run_test(test_dataloader, ModelClass, config, results, args, lang_availables):
+def _run_test(test_dataloader, ModelClass, config, results, args, lang_availables, model):
     
     checkpoint_path = ''
     if os.path.isfile(os.path.join(args.tmp_path,'best_valid_checkpoint.pth')):
@@ -589,20 +589,20 @@ def _run_test(test_dataloader, ModelClass, config, results, args, lang_available
     
     args.logger.info('loading the best model for testing!')
     checkpoint = torch.load(checkpoint_path)
-    model = ModelClass.from_pretrained(args.model_path, config=config)
+#     model = ModelClass.from_pretrained(args.model_path, config=config)
 
-    if args.hyp_src_hyp_ref:
-        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
-    else:
-        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
+#     if args.hyp_src_hyp_ref:
+#         model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
+#     else:
+#         model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
 
-    model.to('cuda')
-    optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
-    mse = nn.MSELoss()
-    model, optimizer = apex.amp.initialize(model, optimizer, opt_level='O%i' % 1)
+#     model.to('cuda')
+#     optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
+#     mse = nn.MSELoss()
+#     model, optimizer = apex.amp.initialize(model, optimizer, opt_level='O%i' % 1)
     model.load_state_dict(checkpoint['model'])
-    optimizer.load_state_dict(checkpoint['optimizer'])
-    apex.amp.load_state_dict(checkpoint['amp'])
+#     optimizer.load_state_dict(checkpoint['optimizer'])
+#     apex.amp.load_state_dict(checkpoint['amp'])
 
     args.logger.info('finished loading the model!')
     
@@ -619,6 +619,28 @@ def _run_test(test_dataloader, ModelClass, config, results, args, lang_available
 
     
     return results, lang_availables
+
+
+# In[ ]:
+
+
+def build_model(ModelClass, config, args):
+    model = ModelClass.from_pretrained(args.model_path, config=config)
+    model.config.num_labels = 1
+
+    if args.hyp_src_hyp_ref:
+        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size*2, 1)])
+    else:
+        model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
+        
+    model.to('cuda')
+    
+    return model
+
+def reload_model(model, ModelClass, config, args):
+    del model 
+    torch.cuda.empty_cache()
+    return build_model(ModelClass, config, args)
 
 
 # In[17]:
@@ -675,6 +697,7 @@ def main():
     
     lang_availables = [] # only for test
     
+    model = build_model(ModelClass, config, args)
     if args.train:
         for opt in args.optimizers:
             args.optimizer = opt
@@ -682,11 +705,13 @@ def main():
                 args.batch_size = bt
                 for n_trial in range(1, args.trial_times+1):
                     args.n_trial = n_trial
+                    model = reload_model(model, ModelClass, config, args)
                     if len(results['valid'][opt]['batch={}'.format(bt)][args.n_trial-1]['pearson']) != args.epoch_size:
                         best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                                   train_dataloader, 
                                                                   valid_dataloader,
-                                                                  args, results, ModelClass, ConfigClass, config)
+                                                                  args, results, ModelClass, ConfigClass, model
+                                                                  config)
                         with open(best_valid_pearson_path, mode='wb') as w:
                             pickle.dump(best_valid_pearson, w)
                     
@@ -700,7 +725,7 @@ def main():
     
     if args.test:
         args.logger.info('running test')
-        resutls, lang_availables = _run_test(test_dataloader, ModelClass, config, results, args, lang_availables)
+        resutls, lang_availables = _run_test(test_dataloader, ModelClass, config, results, args, lang_availables, model)
     with open(result_path, mode='wb') as w:
         pickle.dump(results, w) 
     args.logger.info('finished running test')
