@@ -7,16 +7,16 @@ DATA_PATH="${PROJECT_DISC}/data/SRHDA/WMT15_17_DA_HUME"
 # DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
 
 MODEL_PATH="${PROJECT_DISC}/model"
-MODEL_NAME="xlm-roberta-large"
+MODEL_NAME="bert-base-multilingual-cased"
 OPTIMIZER=("adam,lr=0.000009" "adam,lr=0.000006" "adam,lr=0.000003")
-BATCH_SIZE=("4")
+BATCH_SIZE=("32")
 DARR="False"
-HYP_REF="False"
-HYP_SRC="True"
+HYP_REF="True"
+HYP_SRC="False"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="False"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
 # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
 # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
