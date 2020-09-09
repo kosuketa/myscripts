@@ -62,7 +62,7 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
             --optimizer "${opt}" \
             --lr_lambda "0.707" \
             --dropout "0.0" \
-            --amp "True" \
+            --amp "False" \
             --load_model "False" \
             --load_model_path "" \
             --save_model_name "model.pth" \
@@ -107,7 +107,7 @@ python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
 --optimizer "${opt}" \
 --lr_lambda "0.707" \
 --dropout "0.0" \
---amp "True" \
+--amp "False" \
 --load_model "False" \
 --load_model_path "" \
 --save_model_name "model.pth" \
