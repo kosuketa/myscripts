@@ -555,7 +555,7 @@ def _run_train(best_valid_pearson,
         
         end_time = time.time()
         args.logger.info('optimizer:{}, batch_size:{}, n_trial:{}, epoch:{} finished!　Took {}m{}s'.format(args.optimizer, args.batch_size, args.n_trial, n_epoch, int((end_time-start_time)/60), int((end_time-start_time)%60)))
-        args.logger.info('lr = {}'.format(optimizer.param_groups[0]['lr']))
+#         args.logger.info('lr = {}'.format(optimizer.param_groups[0]['lr']))
         if args.train:
             args.logger.info('train loss_mean:{:.4f}, pearson:{:.4f}'.format(results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'][-1],
                                                                              results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'][-1]))

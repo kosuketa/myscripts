@@ -3,7 +3,7 @@ PROJECT_DISC="${HOME}/project_disc"
 DATA_PATH="${PROJECT_DISC}/data/SRHDA/WMT15_17_DA_HUME"
 
 # HOME="/home/ksudoh/kosuke-t"
-# PROJECT_DISC="${HOME}/data_link
+# PROJECT_DISC="${HOME}/data_link"
 # DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
 
 MODEL_PATH="${PROJECT_DISC}/model"
