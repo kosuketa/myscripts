@@ -697,6 +697,7 @@ def main():
     
     model = build_model(ModelClass, config, args)
     if args.train:
+        import pdb;pdb.set_trace()
         if len(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson']) != args.epoch_size:
             best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                       train_dataloader, 
