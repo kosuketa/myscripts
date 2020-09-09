@@ -151,6 +151,7 @@ args = parser.parse_args()
 
 # make dump_path
 args.dump_path = os.path.join(os.path.join(args.dump_path, args.exp_name), args.exp_id)
+import pdb;pdb.set_trace()
 if not os.path.isdir(args.dump_path):
     os.makedirs(args.dump_path)
 elif args.empty_dump:

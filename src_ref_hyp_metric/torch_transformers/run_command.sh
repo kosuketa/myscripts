@@ -28,11 +28,10 @@ LANGS="cs-en,de-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
-        for N_TRIAL in `seq "${TRIAL_TIMES}"` ; do
+        for N_TRIAL in `seq "10"` ; do
             python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
             --exp_name "wmt17_all_to_all_${MODEL_NAME}" \
             --exp_id "0" \
-            --trial_times "10" \
             --n_trial "${N_TRIAL}"
             --tmp_path "${HOME}/tmp/tmp_log/" \
             --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
