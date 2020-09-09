@@ -32,7 +32,7 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
             python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
             --exp_name "wmt17_all_to_all_${MODEL_NAME}" \
             --exp_id "0" \
-            --n_trial "${N_TRIAL}" \
+            --n_trial "${N_TRIAL}" \rm 
             --tmp_path "${HOME}/tmp/tmp_log/" \
             --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
             --model_name "${MODEL_NAME}" \

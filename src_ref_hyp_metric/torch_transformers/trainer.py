@@ -670,19 +670,20 @@ def main():
     if result_path not in args.tmp_files:
         args.tmp_files.append(result_path)
     if not os.path.isfile(result_path):
-        results = {mode:
-                       {opt:
-                            {'batch={}'.format(bt):
-                                 [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
-                                  for _ in range(args.trial_times)]
-                             for bt in args.batch_sizes }
-                        for opt in args.optimizers}
-                   for mode in ['train', 'valid']}
+        results = {mode:{} for mode in ['train', 'valid']}
         results['test'] = {key:[] for key in ['loss', 'pearson', 'pred', 'true', 'vector' 'raw_src', 'raw_ref', 'raw_hyp']}
     else:
         with open(result_path, mode='rb') as r:
             results = pickle.load(r) 
-
+    if args.optimizer not in results['valid']:
+        results['train'][args.optimizer] = {}
+        results['valid'][args.optimizer] = {}
+    if 'batch='.format(args.batch_size) not in  results['valid'][args.optimizer]
+        results['train'][args.optimizer]['batch='.format(args.batch_size)] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
+                                                                               for _ in range(args.trial_times)]
+        results['valid'][args.optimizer]['batch='.format(args.batch_size)] =  [{key:[] for key in ['loss', 'pearson', 'pred', 'true', 'raw_src', 'raw_ref', 'raw_hyp']} 
+                                                                               for _ in range(args.trial_times)] 
+    
     best_valid_pearson_path = os.path.join(args.tmp_path, 'best_valid_pearson.pkl')
     if best_valid_pearson_path not in args.tmp_files:
         args.tmp_files.append(best_valid_pearson_path)
