@@ -15,14 +15,14 @@ DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
 
 MODEL_PATH="${PROJECT_DISC}/model"
 # MODEL_NAME="bert-base-uncased"
-# MODEL_NAME="bert-base-multilingual-cased"
+MODEL_NAME="bert-base-multilingual-cased"
 # MODEL_NAME="roberta-base"
 # MODEL_NAME="roberta-large-openai-detector"
 # MODEL_NAME="xlm-mlm-100-1280"
 # MODEL_NAME="xlm-mlm-tlm-xnli15-1024"
-MODEL_NAME="xlm-roberta-large"
+# MODEL_NAME="xlm-roberta-large"
 OPTIMIZER=("adam,lr=0.000009" "adam,lr=0.000003")
-BATCH_SIZE=("8")
+BATCH_SIZE=("16")
 
 DARR="False"
 
@@ -102,348 +102,348 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
     done
 done
 
-# python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-# --exp_name "${EXP_NAME}" \
-# --exp_id "0" \
-# --n_trial "${N_TRIAL}" \
-# --tmp_path "${HOME}/tmp/tmp_log/" \
-# --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-# --model_name "${MODEL_NAME}" \
-# --langs "${LANGS}" \
-# --empty_dump "False" \
-# --train "False" \
-# --test "True" \
-# --batch_size "${mini_batch}" \
-# --epoch_size "10" \
-# --optimizer "${opt}" \
-# --lr_lambda "0.707" \
-# --dropout "0.0" \
-# --amp "False" \
-# --load_model "False" \
-# --load_model_path "" \
-# --save_model_name "model.pth" \
-# --save_model_path "" \
-# --hyp_ref "${HYP_REF}" \
-# --hyp_src "${HYP_SRC}" \
-# --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-# --hyp_src_ref "${HYP_SRC_REF}" \
-# --model_path "${MODEL_PATH}" \
-# --src_train "${DATA_PATH}/train.src" \
-# --src_valid  "${DATA_PATH}/valid.src" \
-# --src_test "${DATA_PATH}/test.src" \
-# --ref_train "${DATA_PATH}/train.ref" \
-# --ref_valid "${DATA_PATH}/valid.ref" \
-# --ref_test "${DATA_PATH}/test.ref" \
-# --hyp_train "${DATA_PATH}/train.hyp" \
-# --hyp_valid "${DATA_PATH}/valid.hyp" \
-# --hyp_test "${DATA_PATH}/test.hyp" \
-# --label_train "${DATA_PATH}/train.label" \
-# --label_valid "${DATA_PATH}/valid.label" \
-# --label_test "${DATA_PATH}/test.label" \
-# --darr "${DARR}" \
-# --train_shrink "1.0" \
-# --debug "False"
+python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+--exp_name "${EXP_NAME}" \
+--exp_id "0" \
+--n_trial "${N_TRIAL}" \
+--tmp_path "${HOME}/tmp/tmp_log/" \
+--dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+--model_name "${MODEL_NAME}" \
+--langs "${LANGS}" \
+--empty_dump "False" \
+--train "False" \
+--test "True" \
+--batch_size "${mini_batch}" \
+--epoch_size "10" \
+--optimizer "${opt}" \
+--lr_lambda "0.707" \
+--dropout "0.0" \
+--amp "False" \
+--load_model "False" \
+--load_model_path "" \
+--save_model_name "model.pth" \
+--save_model_path "" \
+--hyp_ref "${HYP_REF}" \
+--hyp_src "${HYP_SRC}" \
+--hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+--hyp_src_ref "${HYP_SRC_REF}" \
+--model_path "${MODEL_PATH}" \
+--src_train "${DATA_PATH}/train.src" \
+--src_valid  "${DATA_PATH}/valid.src" \
+--src_test "${DATA_PATH}/test.src" \
+--ref_train "${DATA_PATH}/train.ref" \
+--ref_valid "${DATA_PATH}/valid.ref" \
+--ref_test "${DATA_PATH}/test.ref" \
+--hyp_train "${DATA_PATH}/train.hyp" \
+--hyp_valid "${DATA_PATH}/valid.hyp" \
+--hyp_test "${DATA_PATH}/test.hyp" \
+--label_train "${DATA_PATH}/train.label" \
+--label_valid "${DATA_PATH}/valid.label" \
+--label_test "${DATA_PATH}/test.label" \
+--darr "${DARR}" \
+--train_shrink "1.0" \
+--debug "False"
 
 
 
-# HYP_REF="False"
-# HYP_SRC="True"
-# HYP_SRC_HYP_REF="False"
-# HYP_SRC_REF="False"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
-
-# for mini_batch in "${BATCH_SIZE[@]}" ; do
-#     for opt in "${OPTIMIZER[@]}" ; do
-#         for N_TRIAL in `seq "10"` ; do
-#             python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-#             --exp_name "${EXP_NAME}" \
-#             --exp_id "0" \
-#             --n_trial "${N_TRIAL}" \
-#             --tmp_path "${HOME}/tmp/tmp_log/" \
-#             --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-#             --model_name "${MODEL_NAME}" \
-#             --langs "${LANGS}" \
-#             --empty_dump "False" \
-#             --train "True" \
-#             --test "False" \
-#             --batch_size "${mini_batch}" \
-#             --epoch_size "10" \
-#             --optimizer "${opt}" \
-#             --lr_lambda "0.707" \
-#             --dropout "0.0" \
-#             --amp "False" \
-#             --load_model "False" \
-#             --load_model_path "" \
-#             --save_model_name "model.pth" \
-#             --save_model_path "" \
-#             --hyp_ref "${HYP_REF}" \
-#             --hyp_src "${HYP_SRC}" \
-#             --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-#             --hyp_src_ref "${HYP_SRC_REF}" \
-#             --model_path "${MODEL_PATH}" \
-#             --src_train "${DATA_PATH}/train.src" \
-#             --src_valid  "${DATA_PATH}/valid.src" \
-#             --src_test "${DATA_PATH}/test.src" \
-#             --ref_train "${DATA_PATH}/train.ref" \
-#             --ref_valid "${DATA_PATH}/valid.ref" \
-#             --ref_test "${DATA_PATH}/test.ref" \
-#             --hyp_train "${DATA_PATH}/train.hyp" \
-#             --hyp_valid "${DATA_PATH}/valid.hyp" \
-#             --hyp_test "${DATA_PATH}/test.hyp" \
-#             --label_train "${DATA_PATH}/train.label" \
-#             --label_valid "${DATA_PATH}/valid.label" \
-#             --label_test "${DATA_PATH}/test.label" \
-#             --darr "${DARR}" \
-#             --train_shrink "1.0" \
-#             --debug "False"
-#         done
-#     done
-# done
-
-# python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-# --exp_name "${EXP_NAME}" \
-# --exp_id "0" \
-# --n_trial "${N_TRIAL}" \
-# --tmp_path "${HOME}/tmp/tmp_log/" \
-# --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-# --model_name "${MODEL_NAME}" \
-# --langs "${LANGS}" \
-# --empty_dump "False" \
-# --train "False" \
-# --test "True" \
-# --batch_size "${mini_batch}" \
-# --epoch_size "10" \
-# --optimizer "${opt}" \
-# --lr_lambda "0.707" \
-# --dropout "0.0" \
-# --amp "False" \
-# --load_model "False" \
-# --load_model_path "" \
-# --save_model_name "model.pth" \
-# --save_model_path "" \
-# --hyp_ref "${HYP_REF}" \
-# --hyp_src "${HYP_SRC}" \
-# --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-# --hyp_src_ref "${HYP_SRC_REF}" \
-# --model_path "${MODEL_PATH}" \
-# --src_train "${DATA_PATH}/train.src" \
-# --src_valid  "${DATA_PATH}/valid.src" \
-# --src_test "${DATA_PATH}/test.src" \
-# --ref_train "${DATA_PATH}/train.ref" \
-# --ref_valid "${DATA_PATH}/valid.ref" \
-# --ref_test "${DATA_PATH}/test.ref" \
-# --hyp_train "${DATA_PATH}/train.hyp" \
-# --hyp_valid "${DATA_PATH}/valid.hyp" \
-# --hyp_test "${DATA_PATH}/test.hyp" \
-# --label_train "${DATA_PATH}/train.label" \
-# --label_valid "${DATA_PATH}/valid.label" \
-# --label_test "${DATA_PATH}/test.label" \
-# --darr "${DARR}" \
-# --train_shrink "1.0" \
-# --debug "False"
-
-
-# HYP_REF="False"
-# HYP_SRC="False"
-# HYP_SRC_HYP_REF="True"
-# HYP_SRC_REF="False"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
+HYP_REF="False"
+HYP_SRC="True"
+HYP_SRC_HYP_REF="False"
+HYP_SRC_REF="False"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
 # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+
+for mini_batch in "${BATCH_SIZE[@]}" ; do
+    for opt in "${OPTIMIZER[@]}" ; do
+        for N_TRIAL in `seq "10"` ; do
+            python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+            --exp_name "${EXP_NAME}" \
+            --exp_id "0" \
+            --n_trial "${N_TRIAL}" \
+            --tmp_path "${HOME}/tmp/tmp_log/" \
+            --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+            --model_name "${MODEL_NAME}" \
+            --langs "${LANGS}" \
+            --empty_dump "False" \
+            --train "True" \
+            --test "False" \
+            --batch_size "${mini_batch}" \
+            --epoch_size "10" \
+            --optimizer "${opt}" \
+            --lr_lambda "0.707" \
+            --dropout "0.0" \
+            --amp "False" \
+            --load_model "False" \
+            --load_model_path "" \
+            --save_model_name "model.pth" \
+            --save_model_path "" \
+            --hyp_ref "${HYP_REF}" \
+            --hyp_src "${HYP_SRC}" \
+            --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+            --hyp_src_ref "${HYP_SRC_REF}" \
+            --model_path "${MODEL_PATH}" \
+            --src_train "${DATA_PATH}/train.src" \
+            --src_valid  "${DATA_PATH}/valid.src" \
+            --src_test "${DATA_PATH}/test.src" \
+            --ref_train "${DATA_PATH}/train.ref" \
+            --ref_valid "${DATA_PATH}/valid.ref" \
+            --ref_test "${DATA_PATH}/test.ref" \
+            --hyp_train "${DATA_PATH}/train.hyp" \
+            --hyp_valid "${DATA_PATH}/valid.hyp" \
+            --hyp_test "${DATA_PATH}/test.hyp" \
+            --label_train "${DATA_PATH}/train.label" \
+            --label_valid "${DATA_PATH}/valid.label" \
+            --label_test "${DATA_PATH}/test.label" \
+            --darr "${DARR}" \
+            --train_shrink "1.0" \
+            --debug "False"
+        done
+    done
+done
+
+python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+--exp_name "${EXP_NAME}" \
+--exp_id "0" \
+--n_trial "${N_TRIAL}" \
+--tmp_path "${HOME}/tmp/tmp_log/" \
+--dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+--model_name "${MODEL_NAME}" \
+--langs "${LANGS}" \
+--empty_dump "False" \
+--train "False" \
+--test "True" \
+--batch_size "${mini_batch}" \
+--epoch_size "10" \
+--optimizer "${opt}" \
+--lr_lambda "0.707" \
+--dropout "0.0" \
+--amp "False" \
+--load_model "False" \
+--load_model_path "" \
+--save_model_name "model.pth" \
+--save_model_path "" \
+--hyp_ref "${HYP_REF}" \
+--hyp_src "${HYP_SRC}" \
+--hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+--hyp_src_ref "${HYP_SRC_REF}" \
+--model_path "${MODEL_PATH}" \
+--src_train "${DATA_PATH}/train.src" \
+--src_valid  "${DATA_PATH}/valid.src" \
+--src_test "${DATA_PATH}/test.src" \
+--ref_train "${DATA_PATH}/train.ref" \
+--ref_valid "${DATA_PATH}/valid.ref" \
+--ref_test "${DATA_PATH}/test.ref" \
+--hyp_train "${DATA_PATH}/train.hyp" \
+--hyp_valid "${DATA_PATH}/valid.hyp" \
+--hyp_test "${DATA_PATH}/test.hyp" \
+--label_train "${DATA_PATH}/train.label" \
+--label_valid "${DATA_PATH}/valid.label" \
+--label_test "${DATA_PATH}/test.label" \
+--darr "${DARR}" \
+--train_shrink "1.0" \
+--debug "False"
 
 
-# for mini_batch in "${BATCH_SIZE[@]}" ; do
-#     for opt in "${OPTIMIZER[@]}" ; do
-#         for N_TRIAL in `seq "10"` ; do
-#             python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-#             --exp_name "${EXP_NAME}" \
-#             --exp_id "0" \
-#             --n_trial "${N_TRIAL}" \
-#             --tmp_path "${HOME}/tmp/tmp_log/" \
-#             --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-#             --model_name "${MODEL_NAME}" \
-#             --langs "${LANGS}" \
-#             --empty_dump "False" \
-#             --train "True" \
-#             --test "False" \
-#             --batch_size "${mini_batch}" \
-#             --epoch_size "10" \
-#             --optimizer "${opt}" \
-#             --lr_lambda "0.707" \
-#             --dropout "0.0" \
-#             --amp "False" \
-#             --load_model "False" \
-#             --load_model_path "" \
-#             --save_model_name "model.pth" \
-#             --save_model_path "" \
-#             --hyp_ref "${HYP_REF}" \
-#             --hyp_src "${HYP_SRC}" \
-#             --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-#             --hyp_src_ref "${HYP_SRC_REF}" \
-#             --model_path "${MODEL_PATH}" \
-#             --src_train "${DATA_PATH}/train.src" \
-#             --src_valid  "${DATA_PATH}/valid.src" \
-#             --src_test "${DATA_PATH}/test.src" \
-#             --ref_train "${DATA_PATH}/train.ref" \
-#             --ref_valid "${DATA_PATH}/valid.ref" \
-#             --ref_test "${DATA_PATH}/test.ref" \
-#             --hyp_train "${DATA_PATH}/train.hyp" \
-#             --hyp_valid "${DATA_PATH}/valid.hyp" \
-#             --hyp_test "${DATA_PATH}/test.hyp" \
-#             --label_train "${DATA_PATH}/train.label" \
-#             --label_valid "${DATA_PATH}/valid.label" \
-#             --label_test "${DATA_PATH}/test.label" \
-#             --darr "${DARR}" \
-#             --train_shrink "1.0" \
-#             --debug "False"
-#         done
-#     done
-# done
-
-# python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-# --exp_name "${EXP_NAME}" \
-# --exp_id "0" \
-# --n_trial "${N_TRIAL}" \
-# --tmp_path "${HOME}/tmp/tmp_log/" \
-# --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-# --model_name "${MODEL_NAME}" \
-# --langs "${LANGS}" \
-# --empty_dump "False" \
-# --train "False" \
-# --test "True" \
-# --batch_size "${mini_batch}" \
-# --epoch_size "10" \
-# --optimizer "${opt}" \
-# --lr_lambda "0.707" \
-# --dropout "0.0" \
-# --amp "False" \
-# --load_model "False" \
-# --load_model_path "" \
-# --save_model_name "model.pth" \
-# --save_model_path "" \
-# --hyp_ref "${HYP_REF}" \
-# --hyp_src "${HYP_SRC}" \
-# --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-# --hyp_src_ref "${HYP_SRC_REF}" \
-# --model_path "${MODEL_PATH}" \
-# --src_train "${DATA_PATH}/train.src" \
-# --src_valid  "${DATA_PATH}/valid.src" \
-# --src_test "${DATA_PATH}/test.src" \
-# --ref_train "${DATA_PATH}/train.ref" \
-# --ref_valid "${DATA_PATH}/valid.ref" \
-# --ref_test "${DATA_PATH}/test.ref" \
-# --hyp_train "${DATA_PATH}/train.hyp" \
-# --hyp_valid "${DATA_PATH}/valid.hyp" \
-# --hyp_test "${DATA_PATH}/test.hyp" \
-# --label_train "${DATA_PATH}/train.label" \
-# --label_valid "${DATA_PATH}/valid.label" \
-# --label_test "${DATA_PATH}/test.label" \
-# --darr "${DARR}" \
-# --train_shrink "1.0" \
-# --debug "False"
-
-
-# HYP_REF="False"
-# HYP_SRC="False"
-# HYP_SRC_HYP_REF="False"
-# HYP_SRC_REF="True"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-# # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+HYP_REF="False"
+HYP_SRC="False"
+HYP_SRC_HYP_REF="True"
+HYP_SRC_REF="False"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
 # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
 
-# for mini_batch in "${BATCH_SIZE[@]}" ; do
-#     for opt in "${OPTIMIZER[@]}" ; do
-#         for N_TRIAL in `seq "10"` ; do
-#             python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-#             --exp_name "${EXP_NAME}" \
-#             --exp_id "0" \
-#             --n_trial "${N_TRIAL}" \
-#             --tmp_path "${HOME}/tmp/tmp_log/" \
-#             --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-#             --model_name "${MODEL_NAME}" \
-#             --langs "${LANGS}" \
-#             --empty_dump "False" \
-#             --train "True" \
-#             --test "False" \
-#             --batch_size "${mini_batch}" \
-#             --epoch_size "10" \
-#             --optimizer "${opt}" \
-#             --lr_lambda "0.707" \
-#             --dropout "0.0" \
-#             --amp "False" \
-#             --load_model "False" \
-#             --load_model_path "" \
-#             --save_model_name "model.pth" \
-#             --save_model_path "" \
-#             --hyp_ref "${HYP_REF}" \
-#             --hyp_src "${HYP_SRC}" \
-#             --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-#             --hyp_src_ref "${HYP_SRC_REF}" \
-#             --model_path "${MODEL_PATH}" \
-#             --src_train "${DATA_PATH}/train.src" \
-#             --src_valid  "${DATA_PATH}/valid.src" \
-#             --src_test "${DATA_PATH}/test.src" \
-#             --ref_train "${DATA_PATH}/train.ref" \
-#             --ref_valid "${DATA_PATH}/valid.ref" \
-#             --ref_test "${DATA_PATH}/test.ref" \
-#             --hyp_train "${DATA_PATH}/train.hyp" \
-#             --hyp_valid "${DATA_PATH}/valid.hyp" \
-#             --hyp_test "${DATA_PATH}/test.hyp" \
-#             --label_train "${DATA_PATH}/train.label" \
-#             --label_valid "${DATA_PATH}/valid.label" \
-#             --label_test "${DATA_PATH}/test.label" \
-#             --darr "${DARR}" \
-#             --train_shrink "1.0" \
-#             --debug "False"
-#         done
-#     done
-# done
+for mini_batch in "${BATCH_SIZE[@]}" ; do
+    for opt in "${OPTIMIZER[@]}" ; do
+        for N_TRIAL in `seq "10"` ; do
+            python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+            --exp_name "${EXP_NAME}" \
+            --exp_id "0" \
+            --n_trial "${N_TRIAL}" \
+            --tmp_path "${HOME}/tmp/tmp_log/" \
+            --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+            --model_name "${MODEL_NAME}" \
+            --langs "${LANGS}" \
+            --empty_dump "False" \
+            --train "True" \
+            --test "False" \
+            --batch_size "${mini_batch}" \
+            --epoch_size "10" \
+            --optimizer "${opt}" \
+            --lr_lambda "0.707" \
+            --dropout "0.0" \
+            --amp "False" \
+            --load_model "False" \
+            --load_model_path "" \
+            --save_model_name "model.pth" \
+            --save_model_path "" \
+            --hyp_ref "${HYP_REF}" \
+            --hyp_src "${HYP_SRC}" \
+            --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+            --hyp_src_ref "${HYP_SRC_REF}" \
+            --model_path "${MODEL_PATH}" \
+            --src_train "${DATA_PATH}/train.src" \
+            --src_valid  "${DATA_PATH}/valid.src" \
+            --src_test "${DATA_PATH}/test.src" \
+            --ref_train "${DATA_PATH}/train.ref" \
+            --ref_valid "${DATA_PATH}/valid.ref" \
+            --ref_test "${DATA_PATH}/test.ref" \
+            --hyp_train "${DATA_PATH}/train.hyp" \
+            --hyp_valid "${DATA_PATH}/valid.hyp" \
+            --hyp_test "${DATA_PATH}/test.hyp" \
+            --label_train "${DATA_PATH}/train.label" \
+            --label_valid "${DATA_PATH}/valid.label" \
+            --label_test "${DATA_PATH}/test.label" \
+            --darr "${DARR}" \
+            --train_shrink "1.0" \
+            --debug "False"
+        done
+    done
+done
 
-# python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
-# --exp_name "${EXP_NAME}" \
-# --exp_id "0" \
-# --n_trial "${N_TRIAL}" \
-# --tmp_path "${HOME}/tmp/tmp_log/" \
-# --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
-# --model_name "${MODEL_NAME}" \
-# --langs "${LANGS}" \
-# --empty_dump "False" \
-# --train "False" \
-# --test "True" \
-# --batch_size "${mini_batch}" \
-# --epoch_size "10" \
-# --optimizer "${opt}" \
-# --lr_lambda "0.707" \
-# --dropout "0.0" \
-# --amp "False" \
-# --load_model "False" \
-# --load_model_path "" \
-# --save_model_name "model.pth" \
-# --save_model_path "" \
-# --hyp_ref "${HYP_REF}" \
-# --hyp_src "${HYP_SRC}" \
-# --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
-# --hyp_src_ref "${HYP_SRC_REF}" \
-# --model_path "${MODEL_PATH}" \
-# --src_train "${DATA_PATH}/train.src" \
-# --src_valid  "${DATA_PATH}/valid.src" \
-# --src_test "${DATA_PATH}/test.src" \
-# --ref_train "${DATA_PATH}/train.ref" \
-# --ref_valid "${DATA_PATH}/valid.ref" \
-# --ref_test "${DATA_PATH}/test.ref" \
-# --hyp_train "${DATA_PATH}/train.hyp" \
-# --hyp_valid "${DATA_PATH}/valid.hyp" \
-# --hyp_test "${DATA_PATH}/test.hyp" \
-# --label_train "${DATA_PATH}/train.label" \
-# --label_valid "${DATA_PATH}/valid.label" \
-# --label_test "${DATA_PATH}/test.label" \
-# --darr "${DARR}" \
-# --train_shrink "1.0" \
-# --debug "False"
+python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+--exp_name "${EXP_NAME}" \
+--exp_id "0" \
+--n_trial "${N_TRIAL}" \
+--tmp_path "${HOME}/tmp/tmp_log/" \
+--dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+--model_name "${MODEL_NAME}" \
+--langs "${LANGS}" \
+--empty_dump "False" \
+--train "False" \
+--test "True" \
+--batch_size "${mini_batch}" \
+--epoch_size "10" \
+--optimizer "${opt}" \
+--lr_lambda "0.707" \
+--dropout "0.0" \
+--amp "False" \
+--load_model "False" \
+--load_model_path "" \
+--save_model_name "model.pth" \
+--save_model_path "" \
+--hyp_ref "${HYP_REF}" \
+--hyp_src "${HYP_SRC}" \
+--hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+--hyp_src_ref "${HYP_SRC_REF}" \
+--model_path "${MODEL_PATH}" \
+--src_train "${DATA_PATH}/train.src" \
+--src_valid  "${DATA_PATH}/valid.src" \
+--src_test "${DATA_PATH}/test.src" \
+--ref_train "${DATA_PATH}/train.ref" \
+--ref_valid "${DATA_PATH}/valid.ref" \
+--ref_test "${DATA_PATH}/test.ref" \
+--hyp_train "${DATA_PATH}/train.hyp" \
+--hyp_valid "${DATA_PATH}/valid.hyp" \
+--hyp_test "${DATA_PATH}/test.hyp" \
+--label_train "${DATA_PATH}/train.label" \
+--label_valid "${DATA_PATH}/valid.label" \
+--label_test "${DATA_PATH}/test.label" \
+--darr "${DARR}" \
+--train_shrink "1.0" \
+--debug "False"
+
+
+HYP_REF="False"
+HYP_SRC="False"
+HYP_SRC_HYP_REF="False"
+HYP_SRC_REF="True"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+
+
+for mini_batch in "${BATCH_SIZE[@]}" ; do
+    for opt in "${OPTIMIZER[@]}" ; do
+        for N_TRIAL in `seq "10"` ; do
+            python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+            --exp_name "${EXP_NAME}" \
+            --exp_id "0" \
+            --n_trial "${N_TRIAL}" \
+            --tmp_path "${HOME}/tmp/tmp_log/" \
+            --dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+            --model_name "${MODEL_NAME}" \
+            --langs "${LANGS}" \
+            --empty_dump "False" \
+            --train "True" \
+            --test "False" \
+            --batch_size "${mini_batch}" \
+            --epoch_size "10" \
+            --optimizer "${opt}" \
+            --lr_lambda "0.707" \
+            --dropout "0.0" \
+            --amp "False" \
+            --load_model "False" \
+            --load_model_path "" \
+            --save_model_name "model.pth" \
+            --save_model_path "" \
+            --hyp_ref "${HYP_REF}" \
+            --hyp_src "${HYP_SRC}" \
+            --hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+            --hyp_src_ref "${HYP_SRC_REF}" \
+            --model_path "${MODEL_PATH}" \
+            --src_train "${DATA_PATH}/train.src" \
+            --src_valid  "${DATA_PATH}/valid.src" \
+            --src_test "${DATA_PATH}/test.src" \
+            --ref_train "${DATA_PATH}/train.ref" \
+            --ref_valid "${DATA_PATH}/valid.ref" \
+            --ref_test "${DATA_PATH}/test.ref" \
+            --hyp_train "${DATA_PATH}/train.hyp" \
+            --hyp_valid "${DATA_PATH}/valid.hyp" \
+            --hyp_test "${DATA_PATH}/test.hyp" \
+            --label_train "${DATA_PATH}/train.label" \
+            --label_valid "${DATA_PATH}/valid.label" \
+            --label_test "${DATA_PATH}/test.label" \
+            --darr "${DARR}" \
+            --train_shrink "1.0" \
+            --debug "False"
+        done
+    done
+done
+
+python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
+--exp_name "${EXP_NAME}" \
+--exp_id "0" \
+--n_trial "${N_TRIAL}" \
+--tmp_path "${HOME}/tmp/tmp_log/" \
+--dump_path "${PROJECT_DISC}/SRHDA/transformers/log/" \
+--model_name "${MODEL_NAME}" \
+--langs "${LANGS}" \
+--empty_dump "False" \
+--train "False" \
+--test "True" \
+--batch_size "${mini_batch}" \
+--epoch_size "10" \
+--optimizer "${opt}" \
+--lr_lambda "0.707" \
+--dropout "0.0" \
+--amp "False" \
+--load_model "False" \
+--load_model_path "" \
+--save_model_name "model.pth" \
+--save_model_path "" \
+--hyp_ref "${HYP_REF}" \
+--hyp_src "${HYP_SRC}" \
+--hyp_src_hyp_ref "${HYP_SRC_HYP_REF}" \
+--hyp_src_ref "${HYP_SRC_REF}" \
+--model_path "${MODEL_PATH}" \
+--src_train "${DATA_PATH}/train.src" \
+--src_valid  "${DATA_PATH}/valid.src" \
+--src_test "${DATA_PATH}/test.src" \
+--ref_train "${DATA_PATH}/train.ref" \
+--ref_valid "${DATA_PATH}/valid.ref" \
+--ref_test "${DATA_PATH}/test.ref" \
+--hyp_train "${DATA_PATH}/train.hyp" \
+--hyp_valid "${DATA_PATH}/valid.hyp" \
+--hyp_test "${DATA_PATH}/test.hyp" \
+--label_train "${DATA_PATH}/train.label" \
+--label_valid "${DATA_PATH}/valid.label" \
+--label_test "${DATA_PATH}/test.label" \
+--darr "${DARR}" \
+--train_shrink "1.0" \
+--debug "False"
 
