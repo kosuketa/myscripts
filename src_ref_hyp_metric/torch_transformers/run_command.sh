@@ -9,15 +9,16 @@ DATA_PATH="${PROJECT_DISC}/data/SRHDA/WMT15_17_DA_HUME"
 MODEL_PATH="${PROJECT_DISC}/model"
 MODEL_NAME="bert-base-multilingual-cased"
 OPTIMIZER=("adam,lr=0.000009" "adam,lr=0.000006" "adam,lr=0.000003")
-BATCH_SIZE=("32")
+BATCH_SIZE=("8")
+AMP="False"
 DARR="False"
-HYP_REF="True"
+HYP_REF="False"
 HYP_SRC="False"
-HYP_SRC_HYP_REF="False"
+HYP_SRC_HYP_REF="True"
 HYP_SRC_REF="False"
-EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
 # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
 # EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
 # lang for WMT19 all-all
@@ -58,7 +59,7 @@ for mini_batch in "${BATCH_SIZE[@]}" ; do
             --optimizer "${opt}" \
             --lr_lambda "0.707" \
             --dropout "0.0" \
-            --amp "True" \
+            --amp "${AMP}" \
             --load_model "False" \
             --load_model_path "" \
             --save_model_name "model.pth" \
@@ -103,7 +104,7 @@ python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
 --optimizer "${opt}" \
 --lr_lambda "0.707" \
 --dropout "0.0" \
---amp "True" \
+--amp "${AMP}" \
 --load_model "False" \
 --load_model_path "" \
 --save_model_name "model.pth" \
