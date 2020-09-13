@@ -54,14 +54,15 @@ preprocessing:
     
 """
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, transform, tokenizer, data_paths, params, data_name=None):
+    def __init__(self, transform, tokenizer, data_paths, args, data_name=None, test=False):
         self.transform = transform
         self.tokenizer = tokenizer
         self.data_paths = data_paths
-        self.args = params
+        self.args = args
+        self.test = test
         self.data = []
         self.label = []
-        self.savedata_dir = os.path.join(params.tmp_path, '{}.pkl'.format(data_name))
+        self.savedata_dir = os.path.join(args.tmp_path, '{}.pkl'.format(data_name))
         if not os.path.isfile(self.savedata_dir):
             self.data = self.read_data(self.data_paths, tokenizer)
             with open(self.savedata_dir, mode='wb') as w:
@@ -200,10 +201,13 @@ class Dataset(torch.utils.data.Dataset):
                 d = DATA[form][i]
                 lang = d.split('\t')[1]
                 if form == 'label':
-                    tmp_dic['{}'.format(form)] = float(d.split('\t')[0])
+                    if self.test and self.args.darr:
+                        tmp_dic[form] = str(d.split('\t')[0])
+                    else:
+                        tmp_dic[form] = float(d.split('\t')[0])
                 else:
                     tmp_dic['raw_{}'.format(form)] = d.split('\t')[0]
-                if 'lang' in tmp_dic:
+                if 'lang' in tmp_dic and form != 'label':
 #                     if not tmp_dic['lang'] == d.split('\t')[1]:
 #                         import pdb;pdb.set_trace()
                     assert tmp_dic['lang'] == lang

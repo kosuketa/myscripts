@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[205]:
+# In[1]:
 
 
 import os
 import sys
 
-#DATA_HOME = '/ahc/work3/kosuke-t/data/'
-DATA_HOME = sys.argv[-1]
+DATA_HOME = '/ahc/work3/kosuke-t/data/'
+#DATA_HOME = sys.argv[-1]
 
 DA_HOME = os.path.join(DATA_HOME, 'WMT/newstest2018-humaneval/analysis')
 DARR_HOME = os.path.join(DATA_HOME, 'WMT/wmt18-metrics-task-package/manual-evaluation/RR-seglevel.csv')
@@ -66,7 +66,7 @@ from  tqdm import tqdm
 import random
 
 
-# In[206]:
+# In[2]:
 
 
 def load_file(filename):
@@ -95,7 +95,7 @@ for lang in langs:
 
 # ↓DARR
 
-# In[207]:
+# In[3]:
 
 
 DArr = load_file(DARR_HOME)
@@ -122,7 +122,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 
 # DA for train
 
-# In[208]:
+# In[4]:
 
 
 filename_good_redup = {lang: os.path.join(DA_HOME, 'ad-{}-good-stnd-redup.csv'.format(lang.replace('-', ''))) for lang in langs}
@@ -188,7 +188,7 @@ corpus_good_redup = make_corpus_good_stnd_redup(langs, DA_data_good_redup)
 corpus_seg_scores = make_corpus_seg_scores(langs, DA_data_seg_scores)
 
 
-# In[209]:
+# In[5]:
 
 
 times_langs = {}
@@ -205,13 +205,13 @@ for corpus in corpus_seg_scores:
             times_langs[lang][n] += 1
 
 
-# In[210]:
+# In[6]:
 
 
 times_langs
 
 
-# In[211]:
+# In[7]:
 
 
 # def remove_outlier(corpus):
@@ -236,7 +236,7 @@ times_langs
 # human_scores, mean, MAP, z = remove_outlier(corpus_seg_scores)
 
 
-# In[212]:
+# In[8]:
 
 
 print('good redup')
@@ -293,7 +293,7 @@ print('{} : {}'.format('To En Total', toen_total))
 print()
 
 
-# In[213]:
+# In[9]:
 
 
 print('saving {}'.format(SAVE_PATH_DA_GOOD_REDUP))
@@ -305,7 +305,7 @@ with open(SAVE_PATH_DA_SEG, mode='wb') as w:
     pickle.dump(corpus_seg_scores, w)
 
 
-# In[163]:
+# In[10]:
 
 
 def load_pickle(filename):
@@ -395,7 +395,7 @@ def get_dup_index(Alldata):
 # Split data into train, valid, test
 # Train:Valid = 9:1 in wmt18
 
-# In[166]:
+# In[11]:
 
 
 valid_ratio = 0.1
@@ -425,7 +425,7 @@ for lang in Alldata_langs.keys():
 Darr = load_pickle(SAVE_PATH_DARR)
 
 
-# In[167]:
+# In[12]:
 
 
 src_train = []
@@ -474,9 +474,10 @@ for idx, test_data in enumerate(Darr):
     ref_test.append('{}\t{}'.format(test_data['ref'], test_data['lang']))
     hyp_test.append('{}\t{}'.format(test_data['hyp2'], test_data['lang']))
     label_test.append('{}>{}\t{}'.format(sid-1, sid, test_data['lang']))
+    label_test.append('{}>{}\t{}'.format(sid-1, sid, test_data['lang']))
 
 
-# In[170]:
+# In[13]:
 
 
 def writeout(filename, obj):
@@ -485,7 +486,7 @@ def writeout(filename, obj):
             w.write(d+os.linesep)
 
 
-# In[173]:
+# In[14]:
 
 
 writeout(SAVE_SRC_TRAIN, src_train)

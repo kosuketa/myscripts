@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[27]:
+# In[1]:
 
 
 import os
 import sys
 
-#DATA_HOME = '/ahc/work3/kosuke-t/data/'
-DATA_HOME = sys.argv[-1]
+DATA_HOME = '/ahc/work3/kosuke-t/data/'
+# DATA_HOME = sys.argv[-1]
 
 DA_HOME = os.path.join(DATA_HOME, 'WMT/newstest2019-humaneval')
 DARR_HOME = os.path.join(DATA_HOME, 'WMT/wmt19-metrics-task-package/manual-evaluation/RR-seglevel.csv')
@@ -49,7 +49,7 @@ from  tqdm import tqdm
 import random
 
 
-# In[25]:
+# In[2]:
 
 
 def load_file(filename):
@@ -78,7 +78,7 @@ for lang in langs:
 
 # ↓DARR
 
-# In[17]:
+# In[3]:
 
 
 DArr = load_file(DARR_HOME)
@@ -145,7 +145,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 
 
 
-# In[18]:
+# In[4]:
 
 
 # filename_good_redup = {lang: os.path.join(DA_HOME, 'ad-{}-good-stnd-redup.csv'.format(lang.replace('-', ''))) for lang in langs}
@@ -207,7 +207,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 # corpus_seg_scores = make_corpus_seg_scores(langs, DA_data_seg_scores)
 
 
-# In[19]:
+# In[5]:
 
 
 # print('good redup')
@@ -231,7 +231,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 # print()
 
 
-# In[20]:
+# In[6]:
 
 
 # print('saving {}'.format(SAVE_PATH_DA_GOOD_REDUP))
@@ -243,7 +243,7 @@ with open(SAVE_PATH_DARR, mode='wb') as w:
 #     pickle.dump(corpus_seg_scores, w)
 
 
-# In[21]:
+# In[7]:
 
 
 def load_pickle(filename):
@@ -303,7 +303,7 @@ def get_dup_index(Alldata):
     return exception_index, dup_set
 
 
-# In[26]:
+# In[8]:
 
 
 valid_ratio = 0.05
@@ -334,7 +334,7 @@ for lang in Alldata_langs.keys():
 Darr = load_pickle(SAVE_PATH_DARR)
 
 
-# In[28]:
+# In[9]:
 
 
 src_train = []
@@ -375,9 +375,10 @@ for idx, test_data in enumerate(Darr):
     ref_test.append('{}\t{}'.format(test_data['ref'], test_data['lang']))
     hyp_test.append('{}\t{}'.format(test_data['hyp2'], test_data['lang']))
     label_test.append('{}>{}\t{}'.format(sid-1, sid, test_data['lang']))
+    label_test.append('{}>{}\t{}'.format(sid-1, sid, test_data['lang']))
 
 
-# In[29]:
+# In[10]:
 
 
 def writeout(filename, obj):
@@ -386,7 +387,7 @@ def writeout(filename, obj):
             w.write(d+os.linesep)
 
 
-# In[30]:
+# In[ ]:
 
 
 writeout(SAVE_SRC_TRAIN, src_train)

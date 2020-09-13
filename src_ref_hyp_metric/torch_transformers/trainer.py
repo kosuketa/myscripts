@@ -215,6 +215,7 @@ hyp_train_flag = os.path.isfile(args.hyp_train) and os.path.isfile(args.hyp_vali
 hyp_test_flag = os.path.isfile(args.hyp_test)
 label_train_flag = os.path.isfile(args.label_train) and os.path.isfile(args.label_valid)
 label_test_flag = os.path.isfile(args.label_test)
+
 if args.train:
     if args.hyp_ref:
         assert hyp_train_flag and ref_train_flag
@@ -672,7 +673,7 @@ def main():
         valid_dataloader = torch.utils.data.DataLoader(DATA['valid'], batch_size=args.batch_size,
                                                    collate_fn=data_trans.collate_fn, shuffle=True)
     if args.test:
-        DATA['test'] = Dataset(data_trans, tokenizer, args.data_paths_test, args, '{}.test'.format(args.exp_name))
+        DATA['test'] = Dataset(data_trans, tokenizer, args.data_paths_test, args, '{}.test'.format(args.exp_name), test=True)
     
         test_dataloader = torch.utils.data.DataLoader(DATA['test'], batch_size=args.batch_size,
                                                   collate_fn=data_trans.collate_fn, shuffle=False)

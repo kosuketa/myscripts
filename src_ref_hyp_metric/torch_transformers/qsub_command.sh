@@ -11,20 +11,24 @@ HOME="/home/ksudoh/kosuke-t"
 source "${HOME}/.bashrc"
 
 PROJECT_DISC="${HOME}/data_link"
-DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
+# DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_19_DA"
+DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_18_DA"
+# DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
+
+YEAR="18"
 
 MODEL_PATH="${PROJECT_DISC}/model"
 # MODEL_NAME="bert-base-uncased"
-MODEL_NAME="bert-base-multilingual-cased"
+# MODEL_NAME="bert-base-multilingual-cased"
 # MODEL_NAME="roberta-base"
 # MODEL_NAME="roberta-large-openai-detector"
 # MODEL_NAME="xlm-mlm-100-1280"
 # MODEL_NAME="xlm-mlm-tlm-xnli15-1024"
-# MODEL_NAME="xlm-roberta-large"
+MODEL_NAME="xlm-roberta-large"
 OPTIMIZER=("adam,lr=0.000009" "adam,lr=0.000003")
-BATCH_SIZE=("16")
+BATCH_SIZE=("8")
 
-DARR="False"
+DARR="True"
 
 # lang for WMT19 all-all
 #LANGS="de-cs,de-en,de-fr,en-cs,en-de,en-fi,en-gu,en-kk,en-lt,en-ru,en-zh,fi-en,fr-de,gu-en,kk-en,lt-en,ru-en,zh-en"
@@ -36,12 +40,12 @@ DARR="False"
 # lang for WMT18 for all-all
 #LANGS="cs-en,de-en,en-cs,en-de,en-et,en-fi,en-ru,en-tr,en-zh,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
 # lang for WMT18 for all-en
-#LANGS="cs-en,de-en,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+LANGS="cs-en,de-en,et-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
 # lang for WMT18 for en-all
 #LANGS="en-cs,en-de,en-et,en-fi,en-ru,en-tr,en-zh"
 
 # lang for WMT17 for all-all
-LANGS="cs-en,de-en,en-ru,en-zh,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
+# LANGS="cs-en,de-en,en-ru,en-zh,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
 # lang for WMT17 all-en
 # LANGS="cs-en,de-en,fi-en,lv-en,ro-en,ru-en,tr-en,zh-en"
 
@@ -49,10 +53,11 @@ HYP_REF="True"
 HYP_SRC="False"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="False"
-EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+
+EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
@@ -150,10 +155,10 @@ HYP_REF="False"
 HYP_SRC="True"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="False"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
+EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
@@ -250,11 +255,10 @@ HYP_REF="False"
 HYP_SRC="False"
 HYP_SRC_HYP_REF="True"
 HYP_SRC_REF="False"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
-
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
+EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
@@ -351,10 +355,10 @@ HYP_REF="False"
 HYP_SRC="False"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="True"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-EXP_NAME="wmt17_all_to_all_${MODEL_NAME}_hyp_src_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
+EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
 
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
