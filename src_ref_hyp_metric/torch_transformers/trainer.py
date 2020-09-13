@@ -606,8 +606,8 @@ def _run_test(test_dataloader, ModelClass, config, results, args, lang_available
 #         model.mlp = nn.Sequential(*[nn.Dropout(args.dropout),nn.Linear(model.config.hidden_size, 1)])
 
 #     model.to('cuda')
-#     optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
-#     mse = nn.MSELoss()
+    optimizer = utils.get_optimizer(list(model.parameters()), args.optimizer)
+    mse = nn.MSELoss()
 #     model, optimizer = apex.amp.initialize(model, optimizer, opt_level='O%i' % 1)
     model.load_state_dict(checkpoint['model'])
 #     optimizer.load_state_dict(checkpoint['optimizer'])
@@ -661,10 +661,10 @@ def main():
     ConfigClass = utils.get_config_class(args.model_name)
     tokenizer = TokenizerClass.from_pretrained(args.model_path)
     config = ConfigClass.from_pretrained(args.model_path)
-    data_trans = Data_Transformer(args, tokenizer)
     args.model_config = config
     DATA = {}
     if args.train:
+        data_trans = Data_Transformer(args, tokenizer)
         DATA['train'] = Dataset(data_trans, tokenizer, args.data_paths_train, args, '{}.train'.format(args.exp_name))
         DATA['valid'] = Dataset(data_trans, tokenizer, args.data_paths_valid, args, '{}.valid'.format(args.exp_name))
         train_dataloader = torch.utils.data.DataLoader(DATA['train'], 
@@ -673,6 +673,7 @@ def main():
         valid_dataloader = torch.utils.data.DataLoader(DATA['valid'], batch_size=args.batch_size,
                                                    collate_fn=data_trans.collate_fn, shuffle=True)
     if args.test:
+        data_trans = Data_Transformer(args, tokenizer, test=True)
         DATA['test'] = Dataset(data_trans, tokenizer, args.data_paths_test, args, '{}.test'.format(args.exp_name), test=True)
     
         test_dataloader = torch.utils.data.DataLoader(DATA['test'], batch_size=args.batch_size,

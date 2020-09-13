@@ -231,10 +231,18 @@ class Dataset(torch.utils.data.Dataset):
                         tmp_dic['lang_hyp_src_ref'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_src_ref'], sep_id, eos_id, hyp_src_ref=True)
             if 'ref' in self.args.forms:
                 tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'], tmp_dic['raw_ref'], tokenizer)
+                if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
+                    tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.85)], tmp_dic['raw_ref'], tokenizer)
+                    if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
+                        tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.75)], tmp_dic['raw_ref'], tokenizer)
+                        if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
+                            tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.65)], tmp_dic['raw_ref'], tokenizer)
+                    if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
+                        import pdb;pdb.set_trace()
                 tmp_dic['seg_hyp_ref'] = self.get_seqment_id(tmp_dic['tok_hyp_ref'], bos_id, sep_id, eos_id)
                 if self.args.lang_id_bool:
                     tmp_dic['lang_hyp_ref'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_ref'], sep_id, eos_id, use_src=False)
-
+                    
             r_data.append(tmp_dic)
         return r_data
 
@@ -258,10 +266,11 @@ class Data_Transformer():
     
     """
     
-    def __init__(self, args, tokenizer):
+    def __init__(self, args, tokenizer, test=False):
         self.args = args
         self.tokenizer = tokenizer
         self.pad_id = tokenizer.pad_token_id
+        self.test = test
     
     def __call__(self, batch):
 #         import pdb;pdb.set_trace()
@@ -310,7 +319,10 @@ class Data_Transformer():
             return_dic['raw_src'].append(btch['raw_src'])
             return_dic['raw_ref'].append(btch['raw_ref'])
             return_dic['raw_hyp'].append(btch['raw_hyp'])
-            return_dic['label'].append(float(btch['label']))
+            if self.args.darr and self.test:
+                return_dic['label'].append(btch['label'])
+            else:
+                return_dic['label'].append(float(btch['label']))
             if 'src' in self.args.forms:
                 tok_hyp_src.append(btch['tok_hyp_src'])
                 seg_hyp_src.append(btch['seg_hyp_src'])
@@ -344,7 +356,10 @@ class Data_Transformer():
             if self.args.lang_id_bool:
                 return_dic['lang_hyp_ref'] = self.padding(lang_hyp_ref, lang_padding=True)
         
-        return_dic['label'] = torch.FloatTensor(return_dic['label'])
+        if self.args.darr and self.test:
+            return_dic['label'] = torch.FloatTensor([0.0] * len(return_dic['label']))
+        else:
+            return_dic['label'] = torch.FloatTensor(return_dic['label'])
     
         return return_dic
 
