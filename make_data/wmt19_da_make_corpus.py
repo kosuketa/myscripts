@@ -7,8 +7,8 @@
 import os
 import sys
 
-DATA_HOME = '/ahc/work3/kosuke-t/data/'
-# DATA_HOME = sys.argv[-1]
+#DATA_HOME = '/ahc/work3/kosuke-t/data/'
+DATA_HOME = sys.argv[-1]
 
 DA_HOME = os.path.join(DATA_HOME, 'WMT/newstest2019-humaneval')
 DARR_HOME = os.path.join(DATA_HOME, 'WMT/wmt19-metrics-task-package/manual-evaluation/RR-seglevel.csv')
@@ -334,7 +334,7 @@ for lang in Alldata_langs.keys():
 Darr = load_pickle(SAVE_PATH_DARR)
 
 
-# In[9]:
+# In[12]:
 
 
 src_train = []
@@ -378,7 +378,7 @@ for idx, test_data in enumerate(Darr):
     label_test.append('{}>{}\t{}'.format(sid-1, sid, test_data['lang']))
 
 
-# In[10]:
+# In[13]:
 
 
 def writeout(filename, obj):
