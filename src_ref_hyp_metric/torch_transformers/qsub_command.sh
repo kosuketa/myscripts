@@ -1,5 +1,5 @@
 #$ -S /bin/bash
-#$ -jc gpu-container_g4
+#$ -jc gpu-container_g8
 #$ -cwd
 #$ -ac d=nvcr-pytorch-2003
 ### $ -v  PYTHONPATH="/home/ksudoh/kosuke-t/.pyenv/versions/3.6.9/envs/src_ref_hyp_metric/lib/python3.6/site-packages:$PYTHONPATH"
@@ -12,10 +12,10 @@ source "${HOME}/.bashrc"
 
 PROJECT_DISC="${HOME}/data_link"
 # DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_19_DA"
-DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_18_DA"
-# DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
+# DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_18_DA"
+DATA_PATH="${PROJECT_DISC}/SRHDA/WMT15_17_DA_HUME"
 
-YEAR="18"
+YEAR="17"
 
 MODEL_PATH="${PROJECT_DISC}/model"
 # MODEL_NAME="bert-base-uncased"
@@ -30,6 +30,9 @@ BATCH_SIZE=("8")
 
 DARR="True"
 
+LANGS_TYPE=all_to_all
+# LANGS_TYPE=all_to_en
+# LANGS_TYPE=en_to_all
 # lang for WMT19 all-all
 #LANGS="de-cs,de-en,de-fr,en-cs,en-de,en-fi,en-gu,en-kk,en-lt,en-ru,en-zh,fi-en,fr-de,gu-en,kk-en,lt-en,ru-en,zh-en"
 # lang for WMT19 all-en
@@ -54,10 +57,10 @@ HYP_SRC="False"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="False"
 
-EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
+EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_hyp_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_ref"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
@@ -149,16 +152,16 @@ python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
 --train_shrink "1.0" \
 --debug "False"
 
-
+<< COMMENTOUT
 
 HYP_REF="False"
 HYP_SRC="True"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="False"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
-EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_ref"
+EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_hyp_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_ref"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
@@ -255,10 +258,10 @@ HYP_REF="False"
 HYP_SRC="False"
 HYP_SRC_HYP_REF="True"
 HYP_SRC_REF="False"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
-EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src"
+EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_hyp_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_ref"
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
     for opt in "${OPTIMIZER[@]}" ; do
@@ -355,10 +358,10 @@ HYP_REF="False"
 HYP_SRC="False"
 HYP_SRC_HYP_REF="False"
 HYP_SRC_REF="True"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_ref"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src"
-# EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_hyp_ref"
-EXP_NAME="wmt${YEAR}_all_to_all_${MODEL_NAME}_hyp_src_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_ref"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src"
+# EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_hyp_ref"
+EXP_NAME="wmt${YEAR}_${LANGS_TYPE}_${MODEL_NAME}_hyp_src_ref"
 
 
 for mini_batch in "${BATCH_SIZE[@]}" ; do
@@ -451,3 +454,4 @@ python ${HOME}/scripts/src_ref_hyp_metric/torch_transformers/trainer.py \
 --train_shrink "1.0" \
 --debug "False"
 
+COMMENTOUT
