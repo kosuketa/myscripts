@@ -170,17 +170,18 @@ if args.save_model_path == '':
     args.save_model_path = os.path.join(args.dump_path, args.save_model_name)
     
 # make tmp_path
-args.tmp_path = os.path.join(os.path.join(args.tmp_path, args.exp_name), args.exp_id)
-if not os.path.isdir(args.tmp_path):
-    os.makedirs(args.tmp_path)
-elif args.empty_dump:
-    rmtree(args.tmp_path)
-    os.makedirs(args.tmp_path)
-if args.save_model_path == '':
-    args.save_model_path = os.path.join(args.tmp_path, args.save_model_name)
 if not args.use_tmp:
     args.tmp_path = args.dump_path
-    
+else:
+    args.tmp_path = os.path.join(os.path.join(args.tmp_path, args.exp_name), args.exp_id)
+    if not os.path.isdir(args.tmp_path):
+        os.makedirs(args.tmp_path)
+    elif args.empty_dump:
+        rmtree(args.tmp_path)
+        os.makedirs(args.tmp_path)
+    if args.save_model_path == '':
+        args.save_model_path = os.path.join(args.tmp_path, args.save_model_name)
+
 # tmp_files 
 args.tmp_files = []
     
