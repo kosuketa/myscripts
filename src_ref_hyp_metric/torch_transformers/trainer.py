@@ -178,7 +178,9 @@ elif args.empty_dump:
     os.makedirs(args.tmp_path)
 if args.save_model_path == '':
     args.save_model_path = os.path.join(args.tmp_path, args.save_model_name)
-
+if not args.use_tmp:
+    args.tmp_path = args.dump_path
+    
 # tmp_files 
 args.tmp_files = []
     
@@ -748,8 +750,9 @@ def main():
                 args.tmp_files.append(performance_summary_filepath)
                 
         args.logger.info('moving tmp files to dump dir')
-        for f in args.tmp_files:
-            shutil.move(f, args.dump_path)
+        if args.use_tmp:
+            for f in args.tmp_files:
+                shutil.move(f, args.dump_path)
         
 
 
