@@ -23,7 +23,9 @@ DEST_DIR = '/ahc/work3/kosuke-t/model'
 
 
 for key in MODELS.keys():
-    for model_name in MODELS[key]: 
+    for model_name in MODELS[key]:
+        if model_name != 'roberta-large':
+            continue
         SAVE_DIR = os.path.join(DEST_DIR, model_name)
         os.makedirs(SAVE_DIR, exist_ok=True)
         
