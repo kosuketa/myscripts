@@ -707,10 +707,9 @@ def main():
             best_valid_pearson = pickle.load(r)
     
     lang_availables = [] # only for test
-    
-    model = build_model(ModelClass, config, args)
-    if args.train:
-        if len(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson']) != args.epoch_size:
+    if len(results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson']) != args.epoch_size:
+        if args.train:
+            model = build_model(ModelClass, config, args)
             best_valid_pearson, results =  _run_train(best_valid_pearson, 
                                                       train_dataloader, 
                                                       valid_dataloader,
@@ -720,14 +719,14 @@ def main():
                 pickle.dump(best_valid_pearson, w)
                     
                          
-        args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
-        args.logger.info('Best Hyper-paramer : {}, batch={}, n_trial={}, epoch={}'.format(best_valid_pearson['optimizer'],
-                                                                                          best_valid_pearson['batch_size'],
-                                                                                          best_valid_pearson['n_trial'],
-                                                                                          best_valid_pearson['epoch']))
-    
+            args.logger.info('Best Valid Pearson : {}'.format(best_valid_pearson['pearson']))            
+            args.logger.info('Best Hyper-paramer : {}, batch={}, n_trial={}, epoch={}'.format(best_valid_pearson['optimizer'],
+                                                                                              best_valid_pearson['batch_size'],
+                                                                                              best_valid_pearson['n_trial'],
+                                                                                              best_valid_pearson['epoch']))
     
     if args.test:
+        model = build_model(ModelClass, config, args)
         args.logger.info('running test')
         resutls, lang_availables = _run_test(test_dataloader, ModelClass, config, results, args, lang_availables, model)
         with open(result_path, mode='wb') as w:
