@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[1]:
 
 
 import os
@@ -19,7 +19,7 @@ DEST_DIR = '/ahc/work3/kosuke-t/model'
 #DEST_DIR = sys.argv[-1]
 
 
-# In[6]:
+# In[2]:
 
 
 for key in MODELS.keys():
