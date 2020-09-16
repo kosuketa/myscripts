@@ -213,9 +213,12 @@ class Dataset(torch.utils.data.Dataset):
                     assert tmp_dic['lang'] == lang
                 else:
                     tmp_dic['lang'] = lang
+            tmp_dic['sid'] = int(i)+1
             if 'src' in self.args.forms:
                 tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'], tmp_dic['raw_src'], tokenizer)
                 if len(tmp_dic['tok_hyp_src']) >= tokenizer.model_max_length:
+                    if not self.test:
+                        continue
                     tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.85)], tmp_dic['raw_src'], tokenizer)
                     if len(tmp_dic['tok_hyp_src']) >= tokenizer.model_max_length:
                         tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.75)], tmp_dic['raw_src'], tokenizer)
@@ -234,6 +237,8 @@ class Dataset(torch.utils.data.Dataset):
                                                                    tmp_dic['raw_ref'], 
                                                                    tokenizer, bos_id, sep_id, eos_id)
                     if len(tmp_dic['tok_hyp_src_ref']) > tokenizer.model_max_length:
+                        if not self.test:
+                            continue
                         tmp_dic['tok_hyp_src_ref'] = self.encode3sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.85)], 
                                                                    tmp_dic['raw_src'][:int(len(tmp_dic['raw_src'])*0.85)], 
                                                                    tmp_dic['raw_ref'][:int(len(tmp_dic['raw_ref'])*0.85)], 
@@ -254,6 +259,8 @@ class Dataset(torch.utils.data.Dataset):
             if 'ref' in self.args.forms:
                 tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'], tmp_dic['raw_ref'], tokenizer)
                 if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
+                    if not self.test:
+                        continue
                     tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.85)], tmp_dic['raw_ref'], tokenizer)
                     if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
                         tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.75)], tmp_dic['raw_ref'], tokenizer)
@@ -332,11 +339,13 @@ class Data_Transformer():
         lang_hyp_src = []
         lang_hyp_ref = []
         lang_hyp_src_ref = []
+        sids = []
         return_dic = {'raw_src':[], 
                       'raw_ref':[], 
                       'raw_hyp':[], 
                       'label':[], 
-                      'lang':[]
+                      'lang':[], 
+                      'sid':[]
                      }
         for btch in batch:
             return_dic['raw_src'].append(btch['raw_src'])
@@ -362,6 +371,7 @@ class Data_Transformer():
                 if self.args.lang_id_bool:
                     lang_hyp_ref.append(btch['lang_hyp_ref'])
             return_dic['lang'].append(btch['lang'])
+            return_dic['sid'].append(btch['sid'])
         
         if 'src' in self.args.forms:
             return_dic['hyp_src'] = self.padding(tok_hyp_src)

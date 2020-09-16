@@ -386,6 +386,7 @@ def _train(model, train_dataloader, mse, optimizer, args, results):
     raw_srcs = []
     raw_refs = []
     raw_hyps = []
+    sids = []
     for n_iter, batch_data in enumerate(train_dataloader):
         if args.debug:
             args.logger.debug('\rnumber of iteration = {}'.format(n_iter), end='')
@@ -397,6 +398,7 @@ def _train(model, train_dataloader, mse, optimizer, args, results):
         raw_srcs.extend(batch_data['raw_src'])
         raw_refs.extend(batch_data['raw_ref'])
         raw_hyps.extend(batch_data['raw_hyp'])
+        sids.extend(batch_data['sid'])
 
     results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'].append(np.mean(losses))
     results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'].append(utils.calc_pearson(preds_ls, trues_ls))
@@ -405,6 +407,7 @@ def _train(model, train_dataloader, mse, optimizer, args, results):
     results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_src'].append(raw_srcs)
     results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_ref'].append(raw_refs)
     results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_hyp'].append(raw_hyps)
+    results['train'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['sid'].append(sids)
     
     return model, train_dataloader, mse, optimizer, args, results
 
@@ -421,6 +424,7 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results,
     raw_srcs = []
     raw_refs = []
     raw_hyps = []
+    sids = []
     for batch_data in valid_dataloader:
         with torch.no_grad():
             loss, preds, labels = run_model(model, batch_data, args, mse, optimizer)
@@ -430,6 +434,7 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results,
         raw_srcs.extend(batch_data['raw_src'])
         raw_refs.extend(batch_data['raw_ref'])
         raw_hyps.extend(batch_data['raw_hyp'])
+        sids.extend(batch_data['sid'])
 
     results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['loss'].append(np.mean(losses))
     results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['pearson'].append(utils.calc_pearson(preds_ls, trues_ls))
@@ -438,6 +443,7 @@ def _valid(model, valid_dataloader, mse, optimizer, args, results,
     results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_src'].append(raw_srcs)
     results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_ref'].append(raw_refs)
     results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['raw_hyp'].append(raw_hyps)
+    results['valid'][args.optimizer]['batch={}'.format(args.batch_size)][args.n_trial-1]['sid'].append(sids)
 
     # update lr
     if best_valid_loss > np.mean(losses):
@@ -483,7 +489,9 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
     raw_srcs = []
     raw_refs = []
     raw_hyps = []
+    sids = []
     vectors = []
+    
     for batch_data in test_dataloader:
         with torch.no_grad():
             loss, preds, labels, hs = run_model(model, batch_data, args, mse, optimizer, getVector=True)
@@ -494,6 +502,7 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
         raw_srcs.extend(batch_data['raw_src'])
         raw_refs.extend(batch_data['raw_ref'])
         raw_hyps.extend(batch_data['raw_hyp'])
+        sids.extend(batch_data['sid'])
         vectors.extend(hs)
 
     results['test']['loss'] = np.mean(losses['all'])
@@ -502,6 +511,7 @@ def _test(model, test_dataloader, mse, optimizer, args, results, lang_availables
     results['test']['raw_src'] = raw_srcs
     results['test']['raw_ref'] = raw_refs
     results['test']['raw_hyp'] = raw_hyps
+    results['test']['sid'] = sids
     results['test']['vector'] = vectors
     
     if not args.darr:
