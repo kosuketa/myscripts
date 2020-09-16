@@ -215,6 +215,15 @@ class Dataset(torch.utils.data.Dataset):
                     tmp_dic['lang'] = lang
             if 'src' in self.args.forms:
                 tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'], tmp_dic['raw_src'], tokenizer)
+                if len(tmp_dic['tok_hyp_src']) >= tokenizer.model_max_length:
+                    tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.85)], tmp_dic['raw_src'], tokenizer)
+                    if len(tmp_dic['tok_hyp_src']) >= tokenizer.model_max_length:
+                        tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.75)], tmp_dic['raw_src'], tokenizer)
+                        if len(tmp_dic['tok_hyp_src']) >= tokenizer.model_max_length:
+                            tmp_dic['tok_hyp_src'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.65)], tmp_dic['raw_src'], tokenizer)
+                    if len(tmp_dic['tok_hyp_src']) >= tokenizer.model_max_length:
+                        self.args.logger.error('seqence token length ({}) is over model_max_length ({})'.format(len(tmp_dic['tok_hyp_src']), tokenizer.model_max_length))
+                        #import pdb;pdb.set_trace()
                 tmp_dic['seg_hyp_src'] = self.get_seqment_id(tmp_dic['tok_hyp_src'], bos_id, sep_id, eos_id)
                 if self.args.lang_id_bool:
                     tmp_dic['lang_hyp_src'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_src'], sep_id, eos_id)
@@ -225,7 +234,20 @@ class Dataset(torch.utils.data.Dataset):
                                                                    tmp_dic['raw_ref'], 
                                                                    tokenizer, bos_id, sep_id, eos_id)
                     if len(tmp_dic['tok_hyp_src_ref']) > tokenizer.model_max_length:
-                        continue
+                        tmp_dic['tok_hyp_src_ref'] = self.encode3sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.85)], 
+                                                                   tmp_dic['raw_src'][:int(len(tmp_dic['raw_src'])*0.85)], 
+                                                                   tmp_dic['raw_ref'][:int(len(tmp_dic['raw_ref'])*0.85)], 
+                                                                   tokenizer, bos_id, sep_id, eos_id)
+                        if len(tmp_dic['tok_hyp_src_ref']) > tokenizer.model_max_length:
+                            tmp_dic['tok_hyp_src_ref'] = self.encode3sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.70)], 
+                                                                       tmp_dic['raw_src'][:int(len(tmp_dic['raw_src'])*0.70)], 
+                                                                       tmp_dic['raw_ref'][:int(len(tmp_dic['raw_ref'])*0.70)], 
+                                                                       tokenizer, bos_id, sep_id, eos_id)
+                            if len(tmp_dic['tok_hyp_src_ref']) > tokenizer.model_max_length:
+                                tmp_dic['tok_hyp_src_ref'] = self.encode3sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.50)], 
+                                                                           tmp_dic['raw_src'][:int(len(tmp_dic['raw_src'])*0.50)], 
+                                                                           tmp_dic['raw_ref'][:int(len(tmp_dic['raw_ref'])*0.50)], 
+                                                                           tokenizer, bos_id, sep_id, eos_id)
                     tmp_dic['seg_hyp_src_ref'] = self.get_seqment_id(tmp_dic['tok_hyp_src_ref'], bos_id, sep_id, eos_id)
                     if self.args.lang_id_bool:
                         tmp_dic['lang_hyp_src_ref'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_src_ref'], sep_id, eos_id, hyp_src_ref=True)
@@ -238,7 +260,8 @@ class Dataset(torch.utils.data.Dataset):
                         if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
                             tmp_dic['tok_hyp_ref'] = self.encode2sents(tmp_dic['raw_hyp'][:int(len(tmp_dic['raw_hyp'])*0.65)], tmp_dic['raw_ref'], tokenizer)
                     if len(tmp_dic['tok_hyp_ref']) >= tokenizer.model_max_length:
-                        import pdb;pdb.set_trace()
+                        self.args.logger.error('seqence token length ({}) is over model_max_length ({})'.format(len(tmp_dic['tok_hyp_ref']), tokenizer.model_max_length))
+                        #import pdb;pdb.set_trace()
                 tmp_dic['seg_hyp_ref'] = self.get_seqment_id(tmp_dic['tok_hyp_ref'], bos_id, sep_id, eos_id)
                 if self.args.lang_id_bool:
                     tmp_dic['lang_hyp_ref'] = self.get_lang_id(tmp_dic['lang'], tmp_dic['tok_hyp_ref'], sep_id, eos_id, use_src=False)
