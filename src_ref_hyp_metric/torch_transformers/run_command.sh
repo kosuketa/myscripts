@@ -8,14 +8,14 @@ YEAR="18"
 
 MODEL_PATH="${PROJECT_DISC}/model"
 # MODEL_NAME="bert-base-uncased"
-# MODEL_NAME="bert-base-multilingual-cased"
+MODEL_NAME="bert-base-multilingual-cased"
 # MODEL_NAME="roberta-base"
 # MODEL_NAME="roberta-large-openai-detector"
 # MODEL_NAME="xlm-mlm-100-1280"
 # MODEL_NAME="xlm-mlm-tlm-xnli15-1024"
-MODEL_NAME="bert-base-uncased"
+# MODEL_NAME="xlm-roberta-large"
 OPTIMIZER=("adam,lr=0.000009")
-BATCH_SIZE=("16")
+BATCH_SIZE=("8")
 
 DARR="True"
 
